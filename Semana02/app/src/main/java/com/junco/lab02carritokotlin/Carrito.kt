@@ -99,9 +99,9 @@ fun main() {
   // PARTE VI: RETO ADICIONAL
 
     println()
-    println("=========================================")
+    println("========================================")
     println(" RETO ADICIONAL ")
-    println("=========================================")
+    println("========================================")
 
     // 1. Probar la función buscarProducto
     println("\n--> Buscando producto 'Laptop HP'...")
