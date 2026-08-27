@@ -26,4 +26,4 @@ En este laboratorio armé un programa en consola que simula un carrito de compra
 2. **¿Qué pasaría si intentas cambiar el precio después de crear el producto?**  
    Kotlin no te deja ni compilar el proyecto. Salta el error `Val cannot be reassigned` porque las propiedades declaradas como `val` son solo de lectura y su valor no se puede reasignar.
 
-![img.png](img.png) 
+![img.png](img.png)
