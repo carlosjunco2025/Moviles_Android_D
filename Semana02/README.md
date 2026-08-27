@@ -25,4 +25,5 @@ Respuestas a las preguntas de análisis (Parte 2)
 ![img.png](img.png) 
 
 -Reto 
+
 <img width="506" height="367" alt="image" src="https://github.com/user-attachments/assets/c2353a31-47ee-40ba-aa35-4f2885d1d074" />
