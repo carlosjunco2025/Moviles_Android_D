@@ -3,8 +3,6 @@
 **Alumno:** Carlos Junco  
 **Curso:** Desarrollo de Aplicaciones Mobile
 
----
-
 ## ¿De qué trata el proyecto?
 En este laboratorio armé un programa en consola que simula un carrito de compras. La idea principal fue trabajar con POO, listas mutables y delegar toda la lógica en funciones específicas para calcular precios, impuestos, descuentos y darle un formato ordenado al reporte de compra.
 
