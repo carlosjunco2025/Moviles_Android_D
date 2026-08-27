@@ -41,6 +41,10 @@ fun mostrarDetalle(productos: List<Producto>) {
     println("---------------------------------------")
 }
 
+fun buscarProducto(productos: List<Producto>, nombre: String): Producto? {
+    return productos.find { it.nombre.equals(nombre, ignoreCase = true) }
+}
+
 fun main() {
     println("=========================================")
     println(" CARRITO DE COMPRAS - TIENDA TECSUP ")
@@ -54,7 +58,7 @@ fun main() {
     carrito.add(Producto("Laptop HP", 2500.0, 1))
     carrito.add(Producto("Mouse Logitech", 45.5, 2))
     carrito.add(Producto("Parlantes soni ", 120.0, 1))
-    carrito.add(Producto("Audifonos RedDragon 24'", 650.0, 1))
+    carrito.add(Producto("Audifonos RedDragon", 650.0, 1))
 
     for (producto in carrito) {
         println("Producto agregado: ${producto.nombre}")
@@ -90,4 +94,41 @@ fun main() {
     }
 
     println(String.format("TOTAL CON DESCUENTO: S/ %.2f", totalConDescuento))
+
+
+  // PARTE VI: RETO ADICIONAL
+
+    println()
+    println("=========================================")
+    println(" RETO ADICIONAL ")
+    println("=========================================")
+
+    // 1. Probar la función buscarProducto
+    println("\n--> Buscando producto 'Laptop HP'...")
+    val encontrado = buscarProducto(carrito, "Laptop HP")
+    if (encontrado != null) {
+        println("Resultado: Encontrado -> ${encontrado.nombre} (S/ ${encontrado.precio})")
+    } else {
+        println("Resultado: No se encontro el producto.")
+    }
+
+    // 2. Eliminar un producto usando removeIf
+    println("\n--> Eliminando 'Mouse Logitech' del carrito con removeIf...")
+    carrito.removeIf { it.nombre.equals("Mouse Logitech", ignoreCase = true) }
+
+    // 3. Mostrar detalle y totales actualizados
+    println("\n--> DETALLE Y TOTALES ACTUALIZADOS:")
+    mostrarDetalle(carrito)
+
+    val subtotalActualizado = calcularSubtotal(carrito)
+    val igvActualizado = calcularIGV(subtotalActualizado)
+    val totalActualizado = calcularTotal(subtotalActualizado, igvActualizado)
+    val descuentoActualizado = calcularDescuento(totalActualizado)
+    val totalFinalActualizado = totalActualizado - descuentoActualizado
+
+    println(String.format("%-25s S/ %8.2f", "Subtotal :", subtotalActualizado))
+    println(String.format("%-25s S/ %8.2f", "IGV (18%):", igvActualizado))
+    println(String.format("%-25s S/ %8.2f", "TOTAL :", totalActualizado))
+    println(String.format("Descuento aplicado: S/ %.2f", descuentoActualizado))
+    println(String.format("TOTAL CON DESCUENTO: S/ %.2f", totalFinalActualizado))
 }
