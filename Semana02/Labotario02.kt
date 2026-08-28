@@ -27,3 +27,31 @@ class CarritoTienda {
 
     fun estaVacio(): Boolean = productosInternos.isEmpty()
 }
+// 3. HERENCIA: Especialización de tipos de productos
+class ProductoFisico(
+    id: String,
+    nombre: String,
+    precioBase: Double,
+    val costoEnvio: Double
+) : Producto(id, nombre, precioBase) {
+
+    override fun calcularPrecioFinal(): Double = precioBase + costoEnvio
+
+    override fun obtenerDetalle(): String {
+        return "${super.obtenerDetalle()} | Envio: S/ $costoEnvio"
+    }
+}
+
+class ProductoDigital(
+    id: String,
+    nombre: String,
+    precioBase: Double,
+    val descuentoLicencia: Double
+) : Producto(id, nombre, precioBase) {
+
+    override fun calcularPrecioFinal(): Double = precioBase - descuentoLicencia
+
+    override fun obtenerDetalle(): String {
+        return "${super.obtenerDetalle()} | Desc. Licencia: -S/ $descuentoLicencia"
+    }
+}
