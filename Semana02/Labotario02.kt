@@ -55,3 +55,23 @@ class ProductoDigital(
         return "${super.obtenerDetalle()} | Desc. Licencia: -S/ $descuentoLicencia"
     }
 }
+
+// 4. POLIMORFISMO: Procesa cualquier subtipo de Producto
+fun calcularTotalCompra(): Double {
+    var total = 0.0
+    for (item in productosInternos) {
+        // Invoca la implementación específica según la instancia concreta
+        total += item.calcularPrecioFinal()
+    }
+    return total
+}
+
+fun imprimirBoleta() {
+    println("\n================ RESUMEN DE COMPRA ================")
+    for (item in productosInternos) {
+        println("${item.obtenerDetalle()} -> Total: S/ ${item.calcularPrecioFinal()}")
+    }
+    println("--------------------------------------------------")
+    println(String.format("TOTAL A PAGAR: S/ %.2f", calcularTotalCompra()))
+    println("==================================================")
+}
