@@ -75,3 +75,15 @@ fun imprimirBoleta() {
     println(String.format("TOTAL A PAGAR: S/ %.2f", calcularTotalCompra()))
     println("==================================================")
 }
+
+// RETO: Búsqueda avanzada usando find
+fun buscarProducto(nombre: String): Producto? {
+    return productosInternos.find { it.nombre.equals(nombre, ignoreCase = true) }
+}
+
+// RETO: Eliminación segura usando removeIf
+fun eliminarProducto(nombre: String): Boolean {
+    val eliminado = productosInternos.removeIf { it.nombre.equals(nombre, ignoreCase = true) }
+    if (eliminado) println("🗑 Producto '$nombre' eliminado del carrito.")
+    return eliminado
+}
