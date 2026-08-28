@@ -12,3 +12,18 @@ abstract class Producto(
         return "[$id] $nombre - Base: S/ $precioBase"
     }
 }
+
+// 2. ENCAPSULAMIENTO: Control estricto del estado interno
+class CarritoTienda {
+    private val productosInternos = mutableListOf<Producto>()
+
+    fun agregar(producto: Producto) {
+        productosInternos.add(producto)
+        println("✔ Registrado: ${producto.nombre}")
+    }
+
+    // Retorna una copia inmutable para no exponer la lista original
+    fun obtenerLista(): List<Producto> = productosInternos.toList()
+
+    fun estaVacio(): Boolean = productosInternos.isEmpty()
+}
