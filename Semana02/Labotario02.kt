@@ -87,3 +87,29 @@ fun eliminarProducto(nombre: String): Boolean {
     if (eliminado) println("🗑 Producto '$nombre' eliminado del carrito.")
     return eliminado
 }
+// Punto de entrada de la aplicación
+fun main() {
+    println("=== SISTEMA DE TIENDA INTELIGENTE (RAMA CON-IA) ===\n")
+    val carrito = CarritoTienda()
+
+    // Carga de productos
+    carrito.agregar(ProductoFisico("F-101", "Laptop Gamer HP", 3500.0, 45.0))
+    carrito.agregar(ProductoFisico("F-102", "Mouse Inalámbrico", 80.0, 10.0))
+    carrito.agregar(ProductoDigital("D-201", "Licencia Windows 11", 150.0, 30.0))
+
+    // Ejecución del Reto: Búsqueda
+    println("\n--> [RETO] Probando Búsqueda:")
+    val resultado = carrito.buscarProducto("Laptop Gamer HP")
+    if (resultado != null) {
+        println("Encontrado: ${resultado.obtenerDetalle()}")
+    } else {
+        println("Producto no encontrado.")
+    }
+
+    // Ejecución del Reto: Eliminación
+    println("\n--> [RETO] Probando Eliminación:")
+    carrito.eliminarProducto("Mouse Inalámbrico")
+
+    // Impresión final polimórfica
+    carrito.imprimirBoleta()
+}
