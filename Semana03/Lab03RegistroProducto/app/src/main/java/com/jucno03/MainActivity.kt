@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -29,11 +30,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PantallaRegistro(modifier: Modifier = Modifier) {
-    var nombre by remember { mutableStateOf("") }
-    var precio by remember { mutableStateOf("") }
-    var cantidad by remember { mutableStateOf("") }
-    var mostrarResumen by remember { mutableStateOf(false) }
+fun PantallaRegistro(
+    modifier: Modifier = Modifier,
+    nombreInicial: String = "",
+    precioInicial: String = "",
+    cantidadInicial: String = "",
+    mostrarResumenInicial: Boolean = false
+) {
+    var nombre by remember { mutableStateOf(nombreInicial) }
+    var precio by remember { mutableStateOf(precioInicial) }
+    var cantidad by remember { mutableStateOf(cantidadInicial) }
+    var mostrarResumen by remember { mutableStateOf(mostrarResumenInicial) }
 
     Column(
         modifier = modifier
@@ -138,5 +145,26 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "1 - Pantalla Vacia")
+@Composable
+fun PreviewPantallaVacia() {
+    MaterialTheme {
+        PantallaRegistro()
+    }
+}
+
+@Preview(showBackground = true, name = "2 - Pantalla con Datos")
+@Composable
+fun PreviewPantallaRegistrada() {
+    MaterialTheme {
+        PantallaRegistro(
+            nombreInicial = "Teclado Mecánico",
+            precioInicial = "150.00",
+            cantidadInicial = "2",
+            mostrarResumenInicial = true
+        )
     }
 }
