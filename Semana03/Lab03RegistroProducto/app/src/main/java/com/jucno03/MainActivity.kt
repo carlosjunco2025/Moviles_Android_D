@@ -49,7 +49,7 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
     var calculado by remember { mutableStateOf(false) }
 
     // ESTADOS DE RESULTADOS
-    var promPonderado by remember { java.lang.Double.NaN.let { mutableDoubleStateOf(0.0) } }
+    var promPonderado by remember { mutableDoubleStateOf(0.0) }
     var promFinalStr by remember { mutableStateOf("") }
     var observacion by remember { mutableStateOf("") }
     var colorChip by remember { mutableStateOf(Color.Gray) }
@@ -96,7 +96,7 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
                 color = Color.Gray
             )
 
-            // SLIDERS POR CURSO
+            // SLIDERS POR CURSO (RETO: Semáforo aplicado en los badges)
             ItemCursoSlider("Fundamentos de Programación", 20, notaFundamentos) { notaFundamentos = it }
             ItemCursoSlider("Programación Orientada a Objetos", 25, notaPOO) { notaPOO = it }
             ItemCursoSlider("Programación en Móviles", 30, notaMoviles) { notaMoviles = it }
@@ -138,23 +138,22 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
                     val pFinal = if (redondear) pPonderado.roundToInt().toDouble() else pPonderado
                     promFinalStr = if (redondear) "${pPonderado.roundToInt()}" else String.format("%.2f", pPonderado)
 
-                    // REGLA DE NEGOCIO (WHEN)
                     when {
                         pFinal >= 17.0 -> {
                             observacion = "EXCELENTE"
-                            colorChip = Color(0xFF1B5E20) // Verde oscuro
+                            colorChip = Color(0xFF1B5E20)
                         }
                         pFinal >= 13.0 -> {
                             observacion = "APROBADO"
-                            colorChip = Color(0xFF2E7D32) // Verde
+                            colorChip = Color(0xFF2E7D32)
                         }
                         pFinal >= 10.0 -> {
                             observacion = "EN RECUPERACIÓN"
-                            colorChip = Color(0xFFF57F17) // Ámbar
+                            colorChip = Color(0xFFF57F17)
                         }
                         else -> {
                             observacion = "DESAPROBADO"
-                            colorChip = Color(0xFFC62828) // Rojo
+                            colorChip = Color(0xFFC62828)
                         }
                     }
                     calculado = true
@@ -166,6 +165,22 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF65558F))
             ) {
                 Text("CALCULAR PROMEDIO", fontWeight = FontWeight.Bold)
+            }
+
+            // RETO OPCIONAL 3: BOTÓN LIMPIAR
+            OutlinedButton(
+                onClick = {
+                    notaFundamentos = 0f
+                    notaPOO = 0f
+                    notaMoviles = 0f
+                    notaBD = 0f
+                    redondear = false
+                    confirmado = false
+                    calculado = false
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("LIMPIAR", color = Color(0xFF65558F), fontWeight = FontWeight.Bold)
             }
 
             // MENSAJE O TARJETA DE RESULTADOS
@@ -222,6 +237,15 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                             )
                         }
+
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                        // RETO OPCIONAL 1: APORTE POR CURSO
+                        Text("Aporte por curso:", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                        Text("Fundamentos: ${notaFundamentos.toInt()} × 20% = ${String.format("%.2f", notaFundamentos * 0.20)}", style = MaterialTheme.typography.bodySmall)
+                        Text("POO: ${notaPOO.toInt()} × 25% = ${String.format("%.2f", notaPOO * 0.25)}", style = MaterialTheme.typography.bodySmall)
+                        Text("Móviles: ${notaMoviles.toInt()} × 30% = ${String.format("%.2f", notaMoviles * 0.30)}", style = MaterialTheme.typography.bodySmall)
+                        Text("Base de Datos: ${notaBD.toInt()} × 25% = ${String.format("%.2f", notaBD * 0.25)}", style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
@@ -237,7 +261,7 @@ fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
 
             // PIE DE PÁGINA
             Text(
-                text = "Desarrollado por: (Tu Nombre Completo)",
+                text = "Desarrollado por: Carlos Junco",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.fillMaxWidth(),
@@ -254,6 +278,9 @@ fun ItemCursoSlider(
     valor: Float,
     onValueChange: (Float) -> Unit
 ) {
+    // RETO OPCIONAL 2: SEMÁFORO (rojo si nota < 13, verde si >= 13)
+    val colorBadge = if (valor < 13f) Color(0xFFC62828) else Color(0xFF2E7D32)
+
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -273,14 +300,14 @@ fun ItemCursoSlider(
                 )
             }
             Surface(
-                color = Color(0xFFEADBFF),
+                color = colorBadge.copy(alpha = 0.15f),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = "${valor.toInt()}",
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF21005D)
+                    color = colorBadge
                 )
             }
         }
