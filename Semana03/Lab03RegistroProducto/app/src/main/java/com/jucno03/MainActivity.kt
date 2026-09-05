@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -30,14 +31,15 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
+    var mensajeConfirmacion by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // ENCABEZADO
+        // ENCABEZADO CON JERARQUÍA TIPOGRÁFICA
         Text(
             text = "Nuevo producto",
             style = MaterialTheme.typography.headlineSmall
@@ -76,7 +78,13 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
-                onClick = { /* Lógica de agregar en C5 */ },
+                onClick = {
+                    if (nombre.isNotBlank() && precio.isNotBlank() && cantidad.isNotBlank()) {
+                        mensajeConfirmacion = "¡Producto registrado con éxito!"
+                    } else {
+                        mensajeConfirmacion = "Por favor completa todos los campos."
+                    }
+                },
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Agregar")
@@ -87,11 +95,21 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
                     nombre = ""
                     precio = ""
                     cantidad = ""
+                    mensajeConfirmacion = ""
                 },
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Limpiar")
             }
+        }
+
+        // MENSAJE DE CONFIRMACIÓN EN VERDE
+        if (mensajeConfirmacion.isNotEmpty()) {
+            Text(
+                text = mensajeConfirmacion,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color(0xFF2E7D32) // Verde de éxito
+            )
         }
     }
 }
