@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PantallaRegistro(modifier: Modifier = Modifier) {
-    // ESTADO (remember + mutableStateOf)
+    // ESTADO
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
@@ -48,7 +48,7 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.outline
         )
 
-        // CAMPOS DE INGRESO CON ESTADO
+        // CAMPOS DE INGRESO
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
@@ -69,5 +69,29 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             label = { Text("Cantidad") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        // BOTONES DE ACCIÓN (ROW)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = { /* Lógica de agregar en C5 */ },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Agregar")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    nombre = ""
+                    precio = ""
+                    cantidad = ""
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Limpiar")
+            }
+        }
     }
 }
