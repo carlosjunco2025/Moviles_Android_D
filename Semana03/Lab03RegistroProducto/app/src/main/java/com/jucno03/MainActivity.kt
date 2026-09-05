@@ -1,4 +1,4 @@
-package com.example.lab03registroproducto
+package com.jucno03
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,12 +26,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PantallaRegistro(modifier: Modifier = Modifier) {
+    // ESTADO (remember + mutableStateOf)
+    var nombre by remember { mutableStateOf("") }
+    var precio by remember { mutableStateOf("") }
+    var cantidad by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // ENCABEZADO CON JERARQUÍA TIPOGRÁFICA
+        // ENCABEZADO
         Text(
             text = "Nuevo producto",
             style = MaterialTheme.typography.headlineSmall
@@ -40,6 +46,28 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             text = "Completa los datos y presiona Agregar",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline
+        )
+
+        // CAMPOS DE INGRESO CON ESTADO
+        OutlinedTextField(
+            value = nombre,
+            onValueChange = { nombre = it },
+            label = { Text("Nombre del Producto") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = precio,
+            onValueChange = { precio = it },
+            label = { Text("Precio") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = cantidad,
+            onValueChange = { cantidad = it },
+            label = { Text("Cantidad") },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
