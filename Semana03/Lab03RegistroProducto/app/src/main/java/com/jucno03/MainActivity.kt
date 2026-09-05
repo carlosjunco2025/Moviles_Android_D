@@ -1,212 +1,298 @@
 package com.jucno03
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 
-@Composable
-fun PantallaRegistro() {
-    // Estados para los campos de texto
-    var nombre by remember { mutableStateOf("") }
-    var precioText by remember { mutableStateOf("") }
-    var cantidadText by remember { mutableStateOf("") }
-
-    // Estados para controlar la vista del resumen y el cálculo
-    var mostrarResumen by remember { mutableStateOf(false) }
-    var importeCalculado by remember { mutableStateOf(0.0) }
-    var nombreGuardado by remember { mutableStateOf("") }
-    var precioGuardado by remember { mutableStateOf(0.0) }
-    var cantidadGuardada by remember { mutableStateOf(0) }
-
-    // Estado para controlar el mensaje de error de validación
-    var mensajeError by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(
-            text = "Registro de Producto",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // Campo Nombre
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
-            label = { Text("Nombre del Producto") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Campo Precio
-        OutlinedTextField(
-            value = precioText,
-            onValueChange = { precioText = it },
-            label = { Text("Precio") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Campo Cantidad
-        OutlinedTextField(
-            value = cantidadText,
-            onValueChange = { cantidadText = it },
-            label = { Text("Cantidad") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botones de Acción
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = {
-                    val precio = precioText.toDoubleOrNull()
-                    val cantidad = cantidadText.toIntOrNull()
-
-                    // Validación de entradas estructurada con `when`
-                    when {
-                        nombre.isBlank() || precioText.isBlank() || cantidadText.isBlank() -> {
-                            mensajeError = "Por favor, llene todos los campos."
-                            mostrarResumen = false
-                        }
-                        precio == null || precio <= 0.0 -> {
-                            mensajeError = "El precio debe ser un número válido mayor a 0."
-                            mostrarResumen = false
-                        }
-                        cantidad == null || cantidad <= 0 -> {
-                            mensajeError = "La cantidad debe ser un número entero mayor a 0."
-                            mostrarResumen = false
-                        }
-                        else -> {
-                            // Cálculo del importe (precio * cantidad)
-                            importeCalculado = precio * cantidad
-
-                            // Guardar valores para el resumen
-                            nombreGuardado = nombre.trim()
-                            precioGuardado = precio
-                            cantidadGuardada = cantidad
-
-                            // Estado de éxito
-                            mensajeError = ""
-                            mostrarResumen = true
-                        }
-                    }
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Agregar")
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            OutlinedButton(
-                onClick = {
-                    // Limpiar todas las variables de estado
-                    nombre = ""
-                    precioText = ""
-                    cantidadText = ""
-                    mostrarResumen = false
-                    mensajeError = ""
-                    importeCalculado = 0.0
-                    nombreGuardado = ""
-                    precioGuardado = 0.0
-                    cantidadGuardada = 0
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Limpiar")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Mensaje de Error
-        if (mensajeError.isNotEmpty()) {
-            Text(
-                text = mensajeError,
-                color = Color.Red,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
-
-        // Resumen y Mensaje de Éxito
-        if (mostrarResumen) {
-            Text(
-                text = "¡Producto registrado con éxito!",
-                color = Color(0xFF2E7D32), // Tono verde Material Design
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Resumen del Producto",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Producto: $nombreGuardado")
-                    Text(text = "Precio unitario: S/ $precioGuardado")
-                    Text(text = "Cantidad: $cantidadGuardada")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Importe total: S/ $importeCalculado",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MaterialTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    PantallaRegistroNotas(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PantallaRegistroNotas(modifier: Modifier = Modifier) {
+    // ESTADOS PARA LAS NOTAS (0 a 20)
+    var notaFundamentos by remember { mutableFloatStateOf(0f) }
+    var notaPOO by remember { mutableFloatStateOf(0f) }
+    var notaMoviles by remember { mutableFloatStateOf(0f) }
+    var notaBD by remember { mutableFloatStateOf(0f) }
+
+    // ESTADOS DE OPCIONES
+    var redondear by remember { mutableStateOf(false) }
+    var confirmado by remember { mutableStateOf(false) }
+    var calculado by remember { mutableStateOf(false) }
+
+    // ESTADOS DE RESULTADOS
+    var promPonderado by remember { java.lang.Double.NaN.let { mutableDoubleStateOf(0.0) } }
+    var promFinalStr by remember { mutableStateOf("") }
+    var observacion by remember { mutableStateOf("") }
+    var colorChip by remember { mutableStateOf(Color.Gray) }
+
+    val gradientBg = Brush.verticalGradient(
+        colors = listOf(Color(0xFFEADBFF), Color(0xFFF6F2FF))
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(gradientBg)
+            .verticalScroll(rememberScrollState())
+    ) {
+        // BARRA SUPERIOR
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = Color(0xFF65558F)
+        ) {
+            Text(
+                text = "Registro de Notas",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // ENCABEZADO DE SECCIÓN
+            Text(
+                text = "Notas del ciclo",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = "Desliza para asignar cada nota (0 a 20)",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+
+            // SLIDERS POR CURSO
+            ItemCursoSlider("Fundamentos de Programación", 20, notaFundamentos) { notaFundamentos = it }
+            ItemCursoSlider("Programación Orientada a Objetos", 25, notaPOO) { notaPOO = it }
+            ItemCursoSlider("Programación en Móviles", 30, notaMoviles) { notaMoviles = it }
+            ItemCursoSlider("Base de Datos", 25, notaBD) { notaBD = it }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // SWITCH REDONDEAR
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Redondear promedio final", style = MaterialTheme.typography.bodyMedium)
+                Switch(
+                    checked = redondear,
+                    onCheckedChange = { redondear = it }
+                )
+            }
+
+            // CHECKBOX CONFIRMACIÓN
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = confirmado,
+                    onCheckedChange = { confirmado = it }
+                )
+                Text(text = "Confirmo que las notas son correctas", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            // BOTÓN CALCULAR PROMEDIO
+            Button(
+                onClick = {
+                    val pPonderado = (notaFundamentos * 0.20) + (notaPOO * 0.25) + (notaMoviles * 0.30) + (notaBD * 0.25)
+                    promPonderado = pPonderado
+
+                    val pFinal = if (redondear) pPonderado.roundToInt().toDouble() else pPonderado
+                    promFinalStr = if (redondear) "${pPonderado.roundToInt()}" else String.format("%.2f", pPonderado)
+
+                    // REGLA DE NEGOCIO (WHEN)
+                    when {
+                        pFinal >= 17.0 -> {
+                            observacion = "EXCELENTE"
+                            colorChip = Color(0xFF1B5E20) // Verde oscuro
+                        }
+                        pFinal >= 13.0 -> {
+                            observacion = "APROBADO"
+                            colorChip = Color(0xFF2E7D32) // Verde
+                        }
+                        pFinal >= 10.0 -> {
+                            observacion = "EN RECUPERACIÓN"
+                            colorChip = Color(0xFFF57F17) // Ámbar
+                        }
+                        else -> {
+                            observacion = "DESAPROBADO"
+                            colorChip = Color(0xFFC62828) // Rojo
+                        }
+                    }
+                    calculado = true
+                },
+                enabled = confirmado,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF65558F))
+            ) {
+                Text("CALCULAR PROMEDIO", fontWeight = FontWeight.Bold)
+            }
+
+            // MENSAJE O TARJETA DE RESULTADOS
+            if (!calculado) {
+                Text(
+                    text = "Asigna las notas y confirma para calcular",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Promedio ponderado:  ${String.format("%.2f", promPonderado)}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+
+                        Row(verticalAlignment = Alignment.Bottom) {
+                            Text(
+                                text = "Promedio final:  $promFinalStr",
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF65558F)
+                                )
+                            )
+                            if (redondear) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "(redondeado)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+
+                        Surface(
+                            color = colorChip.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Text(
+                                text = observacion,
+                                color = colorChip,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
+
+                Text(
+                    text = "✓ Promedio calculado correctamente",
+                    color = Color(0xFF2E7D32),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // PIE DE PÁGINA
+            Text(
+                text = "Desarrollado por: (Tu Nombre Completo)",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun ItemCursoSlider(
+    nombre: String,
+    peso: Int,
+    valor: Float,
+    onValueChange: (Float) -> Unit
+) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = nombre,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "($peso%)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF65558F)
+                )
+            }
+            Surface(
+                color = Color(0xFFEADBFF),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "${valor.toInt()}",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF21005D)
+                )
+            }
+        }
+        Slider(
+            value = valor,
+            onValueChange = onValueChange,
+            valueRange = 0f..20f,
+            steps = 19,
+            colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF65558F),
+                activeTrackColor = Color(0xFF65558F)
+            )
+        )
     }
 }
