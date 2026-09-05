@@ -37,7 +37,7 @@ fun PantallaRegistro() {
     var precioText by remember { mutableStateOf("") }
     var cantidadText by remember { mutableStateOf("") }
 
-    // Estados para controlar la vista del resumen y el calculo
+    // Estados para controlar la vista del resumen y el cálculo
     var mostrarResumen by remember { mutableStateOf(false) }
     var importeCalculado by remember { mutableStateOf(0.0) }
     var nombreGuardado by remember { mutableStateOf("") }
@@ -103,25 +103,36 @@ fun PantallaRegistro() {
         ) {
             Button(
                 onClick = {
-                    // Validación de campos vacíos
-                    if (nombre.isBlank() || precioText.isBlank() || cantidadText.isBlank()) {
-                        mensajeError = "Por favor, llene todos los campos."
-                        mostrarResumen = false
-                    } else {
-                        val precio = precioText.toDoubleOrNull() ?: 0.0
-                        val cantidad = cantidadText.toIntOrNull() ?: 0
+                    val precio = precioText.toDoubleOrNull()
+                    val cantidad = cantidadText.toIntOrNull()
 
-                        // Cálculo del importe (precio * cantidad)
-                        importeCalculado = precio * cantidad
+                    // Validación de entradas estructurada con `when`
+                    when {
+                        nombre.isBlank() || precioText.isBlank() || cantidadText.isBlank() -> {
+                            mensajeError = "Por favor, llene todos los campos."
+                            mostrarResumen = false
+                        }
+                        precio == null || precio <= 0.0 -> {
+                            mensajeError = "El precio debe ser un número válido mayor a 0."
+                            mostrarResumen = false
+                        }
+                        cantidad == null || cantidad <= 0 -> {
+                            mensajeError = "La cantidad debe ser un número entero mayor a 0."
+                            mostrarResumen = false
+                        }
+                        else -> {
+                            // Cálculo del importe (precio * cantidad)
+                            importeCalculado = precio * cantidad
 
-                        // Guardar valores para mostrar en la Card
-                        nombreGuardado = nombre
-                        precioGuardado = precio
-                        cantidadGuardada = cantidad
+                            // Guardar valores para el resumen
+                            nombreGuardado = nombre.trim()
+                            precioGuardado = precio
+                            cantidadGuardada = cantidad
 
-                        // Estado de éxito
-                        mensajeError = ""
-                        mostrarResumen = true
+                            // Estado de éxito
+                            mensajeError = ""
+                            mostrarResumen = true
+                        }
                     }
                 },
                 modifier = Modifier.weight(1f)
@@ -180,7 +191,7 @@ fun PantallaRegistro() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Resume del Producto",
+                        text = "Resumen del Producto",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
