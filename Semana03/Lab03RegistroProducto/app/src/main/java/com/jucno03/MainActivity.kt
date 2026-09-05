@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -31,6 +32,7 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
+    var mostrarResumen by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -48,7 +50,6 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Campo para Nombre del producto
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
@@ -59,7 +60,6 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Fila con Precio y Cantidad compartiendo el espacio
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -81,6 +81,52 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = { mostrarResumen = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Agregar")
+        }
+
+        if (mostrarResumen) {
+            val precioNum = precio.toDoubleOrNull() ?: 0.0
+            val cantidadNum = cantidad.toIntOrNull() ?: 0
+            val importe = precioNum * cantidadNum
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = nombre,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "Precio: S/ " + String.format("%.2f", precioNum),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Cantidad: $cantidadNum",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Importe: S/ " + String.format("%.2f", importe),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
     }
 }
