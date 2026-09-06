@@ -9,11 +9,13 @@ Aplicación Android desarrollada en Jetpack Compose para el registro e ingreso d
 ## Capturas de Pantalla (Parte A)
 
 ### 1. Formulario Vacío
-<img width="258" height="481" alt="image" src="https://github.com/user-attachments/assets/4e585374-1d20-4ab9-a3e5-2abd0564e301" />
+<img width="318" height="414" alt="image" src="https://github.com/user-attachments/assets/9159831e-5dc8-4820-b441-f580923ee41e" />
+
 
 
 ### 2. Producto Registrado
-<img width="271" height="361" alt="image" src="https://github.com/user-attachments/assets/9459df3b-81db-4d8e-ba3d-98c845297b28" />
+<img width="329" height="443" alt="image" src="https://github.com/user-attachments/assets/d7009776-f1a7-4621-94ce-6bc3775ded39" />
+
 
 
 ## Pregunta de Reflexión
