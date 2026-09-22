@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun PantallaCarrito(modifier: Modifier = Modifier) {
@@ -21,6 +22,7 @@ fun PantallaCarrito(modifier: Modifier = Modifier) {
     val subtotal = productos.sumOf { it.precio * it.cantidad }
     val igv = subtotal * 0.18
     val total = subtotal + igv
+    val forma = RoundedCornerShape(12.dp)
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
