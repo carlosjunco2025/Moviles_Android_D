@@ -1,4 +1,4 @@
-package com.example.semana05_navegacion.navigation
+package com.tuapp.navlab_Junco.screens
 
 sealed class Screen(val route: String) {
     object Home : Screen(route = "home")
