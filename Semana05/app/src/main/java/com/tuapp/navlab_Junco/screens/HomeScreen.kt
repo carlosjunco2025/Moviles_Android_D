@@ -19,7 +19,7 @@ fun HomeScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Pantalla Principal",
+            text = "Pantalla Tecsup",
             style = MaterialTheme.typography.headlineMedium
         )
         Spacer(modifier = Modifier.height(32.dp))
@@ -27,14 +27,14 @@ fun HomeScreen(navController: NavController) {
             onClick = { navController.navigate(Screen.List.route) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ver Lista")
+            Text("Ver lista de elementos")
         }
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedButton(
             onClick = { navController.navigate(Screen.Profile.route) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ver Perfil")
+            Text("Mi perfil")
         }
     }
 }

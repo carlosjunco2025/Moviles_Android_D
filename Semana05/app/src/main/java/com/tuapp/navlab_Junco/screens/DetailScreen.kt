@@ -2,7 +2,7 @@ package com.tuapp.navlab_Junco.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,11 +15,11 @@ fun DetailScreen(navController: NavController, itemId: Int) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle de Elemento") },
+                title = { Text("Detalle del elemento") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Volver"
                         )
                     }
@@ -33,19 +33,19 @@ fun DetailScreen(navController: NavController, itemId: Int) {
                 .padding(24.dp)
         ) {
             Text(
-                text = "Detalle del Elemento #$itemId",
+                text = "Elemento #$itemId",
                 style = MaterialTheme.typography.headlineSmall
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "ID del elemento recibido: $itemId",
+                        text = "ID recibido: $itemId",
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Este parametro se transmitio correctamente mediante la ruta tipada en el NavHost.",
+                        text = "Este valor llegó como argumento tipado Int desde el NavHost.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
