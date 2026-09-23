@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:Semana03/Lab03RegistroProducto/app/src/main/java/com/jucno03/ui/theme/Type.kt
 package com.jucno03.ui.theme
 
 import androidx.compose.material3.Typography
@@ -32,3 +33,6 @@ val Typography = Typography(
     )
     */
 )
+=======
+package com.tuapp.tecsupfit.ui
+>>>>>>> Stashed changes:app/src/main/java/com/tuapp/tecsupfit/ui/Type.kt
