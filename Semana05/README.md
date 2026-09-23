@@ -2,7 +2,6 @@
 
 ## 📌 Datos del Estudiante
 - **Nombre Completo:** Carlos Fernando Junco Santiago
-- **Código de Estudiante:** 
 - **Institución:** Tecsup
 - **Curso:** Desarrollo de Aplicaciones Móviles Android
 - **Semana:** 05 - Navegación en Jetpack Compose
