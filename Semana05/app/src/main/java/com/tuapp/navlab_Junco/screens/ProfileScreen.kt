@@ -19,12 +19,12 @@ fun ProfileScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Perfil del Usuario",
+            text = "Mi Perfil",
             style = MaterialTheme.typography.headlineMedium
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Estudiante Tecsup",
+            text = "Juan León Suiyon",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -37,7 +37,7 @@ fun ProfileScreen(navController: NavController) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Volver al Inicio")
+            Text("Ir al inicio")
         }
     }
 }
