@@ -43,11 +43,12 @@ Este proyecto corresponde al desarrollo base del **Portal Académico** realizado
 - **Navegación:** Navigation Compose (`androidx.navigation:navigation-compose`)
 - **Control de Versiones:** Git & GitHub
 
-<img width="226" height="322" alt="image" src="https://github.com/user-attachments/assets/5bc45701-109c-4534-8451-008d7091f6b6" />
-<img width="249" height="314" alt="image" src="https://github.com/user-attachments/assets/84885d28-68c8-484b-adea-07407902c67f" />
-<img width="209" height="400" alt="image" src="https://github.com/user-attachments/assets/478f9470-5848-49bd-a1d0-ebd5ed5c89b1" />
-<img width="187" height="394" alt="image" src="https://github.com/user-attachments/assets/aeec9fab-9c49-43fe-83b1-b5f44b74ee9d" />
+<img width="258" height="350" alt="image" src="https://github.com/user-attachments/assets/0e6ce3c9-e011-484d-8352-c1db898d63df" />
 
+<img width="228" height="349" alt="image" src="https://github.com/user-attachments/assets/7bf65ddb-f3b7-46a8-8980-b4de5fe24741" />
 
+<img width="212" height="389" alt="image" src="https://github.com/user-attachments/assets/06845f76-4f3b-4a7c-8d6a-da6b24ef1aff" />
+
+<img width="190" height="249" alt="image" src="https://github.com/user-attachments/assets/a9bfd174-19b8-4a40-96ac-3b5e477f5bff" />
 
 
