@@ -1,0 +1,8 @@
+com.tuapp.tecsupfit.app-pngs-0 C:\Users\regio\Downloads\fit\app\build\generated\res\pngs\debug
+com.tuapp.tecsupfit.app-updated_navigation_xml-1 C:\Users\regio\Downloads\fit\app\build\generated\updated_navigation_xml\debug
+com.tuapp.tecsupfit.app-packageDebugResources-2 C:\Users\regio\Downloads\fit\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.tuapp.tecsupfit.app-packageDebugResources-3 C:\Users\regio\Downloads\fit\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.tuapp.tecsupfit.app-debug-4 C:\Users\regio\Downloads\fit\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.tuapp.tecsupfit.app-debug-5 C:\Users\regio\Downloads\fit\app\src\debug\res
+com.tuapp.tecsupfit.app-main-6 C:\Users\regio\Downloads\fit\app\src\main\res
+gradleHome-0 C:\Users\regio\.gradle
