@@ -14,8 +14,11 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Login.route
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(navController)
+        }
         composable(Screen.Home.route) {
             HomeScreen(navController)
         }
@@ -28,13 +31,13 @@ fun AppNavigation() {
         composable(
             route = Screen.Detail.route,
             arguments = listOf(
-                navArgument(name = "itemId") {
+                navArgument("itemId") {
                     type = NavType.IntType
-                    defaultValue = 0
+                    defaultValue = 1
                 }
             )
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 1
             DetailScreen(navController, itemId)
         }
     }
