@@ -1,23 +1,42 @@
+cat << 'EOF' > app/src/main/java/com/junco/s6/MainActivity.kt
 package com.junco.s6
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+
+val PurplePrimary = Color(0xFF5E227F)
+val PurpleLightBg = Color(0xFFF3E8F9)
+val PurpleSelected = Color(0xFFE9D5F5)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            MaterialTheme(
+                colorScheme = lightColorScheme(
+                    primary = PurplePrimary,
+                    secondary = PurplePrimary
+                )
+            ) {
                 TECSUPStoreApp()
             }
         }
@@ -36,45 +55,88 @@ fun TECSUPStoreApp() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    text = "TECSUP Store",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
-                )
-                HorizontalDivider()
-                NavigationDrawerItem(
-                    label = { Text("Inicio") },
-                    selected = seccionActual == "Inicio",
-                    onClick = {
-                        seccionActual = "Inicio"
-                        scope.launch { drawerState.close() }
+            ModalDrawerSheet(
+                modifier = Modifier.width(300.dp),
+                drawerContainerColor = Color.White
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(PurpleSelected, shape = CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "MR",
+                            fontWeight = FontWeight.Bold,
+                            color = PurplePrimary,
+                            fontSize = 18.sp
+                        )
                     }
-                )
-                NavigationDrawerItem(
-                    label = { Text("Categorías") },
-                    selected = seccionActual == "Categorías",
-                    onClick = {
-                        seccionActual = "Categorías"
-                        scope.launch { drawerState.close() }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = "Maria Rojas",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = "maria@tecsup.edu.pe",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
                     }
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+                    color = Color.LightGray.copy(alpha = 0.5f)
                 )
-                NavigationDrawerItem(
-                    label = { Text("Mis Pedidos") },
-                    selected = seccionActual == "Mis Pedidos",
-                    onClick = {
-                        seccionActual = "Mis Pedidos"
-                        scope.launch { drawerState.close() }
-                    }
+
+                val items = listOf(
+                    "Inicio" to Icons.Outlined.Home,
+                    "Mis pedidos" to Icons.Outlined.ShoppingBag,
+                    "Favoritos" to Icons.Outlined.FavoriteBorder,
+                    "Perfil" to Icons.Outlined.Person,
+                    "Cerrar sesion" to Icons.Outlined.ExitToApp
                 )
-                NavigationDrawerItem(
-                    label = { Text("Ajustes") },
-                    selected = seccionActual == "Ajustes",
-                    onClick = {
-                        seccionActual = "Ajustes"
-                        scope.launch { drawerState.close() }
-                    }
-                )
+
+                items.forEach { (titulo, icono) ->
+                    val isSelected = seccionActual == titulo
+                    NavigationDrawerItem(
+                        icon = {
+                            Icon(
+                                icono,
+                                contentDescription = titulo,
+                                tint = if (isSelected) PurplePrimary else Color.Gray
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = titulo,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isSelected) PurplePrimary else Color.DarkGray
+                            )
+                        },
+                        selected = isSelected,
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = PurpleSelected,
+                            unselectedContainerColor = Color.Transparent
+                        ),
+                        onClick = {
+                            seccionActual = titulo
+                            scope.launch { drawerState.close() }
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
+                    )
+                }
             }
         }
     ) {
@@ -82,12 +144,33 @@ fun TECSUPStoreApp() {
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
-                    title = { Text(seccionActual) },
+                    title = {
+                        Column {
+                            Text(
+                                "TECSUP Store",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                "Mas vendidos",
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 12.sp
+                            )
+                        }
+                    },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Text("☰", style = MaterialTheme.typography.titleLarge)
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = Color.White
+                            )
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = PurplePrimary
+                    )
                 )
             }
         ) { innerPadding ->
@@ -95,96 +178,59 @@ fun TECSUPStoreApp() {
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
+                    .background(Color(0xFFFAFAFA))
                     .padding(16.dp)
             ) {
                 when (seccionActual) {
-                    "Inicio" -> SeccionInicio(
+                    "Inicio" -> SeccionProductos(
                         onAccionRealizada = { mensaje ->
                             scope.launch { snackbarHostState.showSnackbar(mensaje) }
                         }
                     )
-                    "Categorías" -> SeccionCategorias()
-                    "Mis Pedidos" -> SeccionPedidos()
-                    "Ajustes" -> SeccionAjustes()
+                    else -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Sección: $seccionActual", fontSize = 18.sp, color = Color.Gray)
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun SeccionInicio(onAccionRealizada: (String) -> Unit) {
-    Column {
-        TarjetaProducto(
-            nombreProducto = "Laptop Gamer TECSUP",
-            precio = "S/ 4,500.00",
-            onAccionRealizada = onAccionRealizada
-        )
-        TarjetaProducto(
-            nombreProducto = "Mouse Inalámbrico RGB",
-            precio = "S/ 85.00",
-            onAccionRealizada = onAccionRealizada
-        )
-    }
-}
+data class Producto(val nombre: String, val precio: String)
 
 @Composable
-fun SeccionCategorias() {
-    val categorias = listOf("Laptops y Laptops Gamer", "Periféricos y Mouse", "Monitores", "Accesorios")
-    LazyColumn {
-        items(categorias) { cat ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                Text(
-                    text = cat,
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+fun SeccionProductos(onAccionRealizada: (String) -> Unit) {
+    val listaProductos = listOf(
+        Producto("Audifonos", "S/ 89.00"),
+        Producto("Smartwatch", "S/ 199.00"),
+        Producto("Funda celular", "S/ 25.00")
+    )
+
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(listaProductos) { prod ->
+            TarjetaProductoItem(
+                producto = prod,
+                onAccionRealizada = onAccionRealizada
+            )
         }
     }
 }
 
 @Composable
-fun SeccionPedidos() {
-    Column {
-        Text("Historial de Compras", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Pedido #1024 - Completado", style = MaterialTheme.typography.titleMedium)
-                Text("Total: S/ 4,585.00", style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-    }
-}
-
-@Composable
-fun SeccionAjustes() {
-    Column {
-        Text("Ajustes de la App", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Versión de la App: 1.0.0", style = MaterialTheme.typography.bodyLarge)
-        Text("Usuario: Carlos Junco", style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-fun TarjetaProducto(
-    nombreProducto: String,
-    precio: String,
+fun TarjetaProductoItem(
+    producto: Producto,
     onAccionRealizada: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = PurpleLightBg),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -193,55 +239,80 @@ fun TarjetaProducto(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = nombreProducto,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = precio,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(PurpleSelected, shape = RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.ShoppingBag,
+                        contentDescription = null,
+                        tint = PurplePrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = producto.nombre,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = producto.precio,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
             }
 
             Box {
                 IconButton(onClick = { expanded = true }) {
-                    Text("⋮", style = MaterialTheme.typography.headlineMedium)
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "Opciones",
+                        tint = Color.Gray
+                    )
                 }
 
                 DropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(Color.White)
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Ver Detalle") },
+                        text = { Text("Favoritos", color = Color.DarkGray) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Favorite, contentDescription = null, tint = Color.DarkGray)
+                        },
                         onClick = {
                             expanded = false
-                            onAccionRealizada("Viendo detalle de $nombreProducto")
+                            onAccionRealizada("Añadido a Favoritos: ${producto.nombre}")
                         }
                     )
+                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
                     DropdownMenuItem(
-                        text = { Text("Compartir") },
+                        text = { Text("Compartir", color = Color.DarkGray) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Share, contentDescription = null, tint = Color.DarkGray)
+                        },
                         onClick = {
                             expanded = false
-                            onAccionRealizada("Compartiendo $nombreProducto")
+                            onAccionRealizada("Compartiendo: ${producto.nombre}")
                         }
                     )
-                    HorizontalDivider()
+                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
                     DropdownMenuItem(
-                        text = { Text("Editar") },
+                        text = { Text("Reportar", color = Color.DarkGray) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Warning, contentDescription = null, tint = Color.DarkGray)
+                        },
                         onClick = {
                             expanded = false
-                            onAccionRealizada("Editando $nombreProducto")
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Eliminar") },
-                        onClick = {
-                            expanded = false
-                            onAccionRealizada("Eliminando $nombreProducto")
+                            onAccionRealizada("Reportado: ${producto.nombre}")
                         }
                     )
                 }
@@ -249,3 +320,5 @@ fun TarjetaProducto(
         }
     }
 }
+EOF
+git add . && git commit -m "feat(ui): implementacion exacta de UI segun diseño (Commit 6)" && git push origin main
