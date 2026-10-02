@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +25,7 @@ class MainActivity : ComponentActivity() {
                             style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        // Hito 1: Tarjetas con estado expanded e ícono de 3 puntos
+                        // Hito 2: Tarjetas con DropdownMenu básico funcionando
                         TarjetaProducto(nombreProducto = "Laptop Gamer TECSUP", precio = "S/ 4,500.00")
                         TarjetaProducto(nombreProducto = "Mouse Inalámbrico RGB", precio = "S/ 85.00")
                     }
@@ -42,7 +40,6 @@ fun TarjetaProducto(
     nombreProducto: String,
     precio: String
 ) {
-    // Estado para controlar la apertura del menú de la tarjeta
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -71,12 +68,26 @@ fun TarjetaProducto(
                 )
             }
 
-            // Ícono de 3 puntos que activa el estado expanded
+            // Menú desplegable básico
             Box {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Opciones del producto"
+                    Text(
+                        text = "⋮",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Editar") },
+                        onClick = { expanded = false }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Eliminar") },
+                        onClick = { expanded = false }
                     )
                 }
             }
