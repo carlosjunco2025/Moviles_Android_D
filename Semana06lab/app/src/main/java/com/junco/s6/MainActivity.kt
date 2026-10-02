@@ -1,3 +1,8 @@
+package com.junco.s6
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -7,20 +12,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "TECSUP Store - Catálogo",
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        // Hito 1: Tarjetas con estado expanded e ícono de 3 puntos
+                        TarjetaProducto(nombreProducto = "Laptop Gamer TECSUP", precio = "S/ 4,500.00")
+                        TarjetaProducto(nombreProducto = "Mouse Inalámbrico RGB", precio = "S/ 85.00")
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun TarjetaProducto(
     nombreProducto: String,
-    precio: String,
-    onEditar: () -> Unit = {},
-    onEliminar: () -> Unit = {}
+    precio: String
 ) {
-    // Estado booleano para controlar la visibilidad del DropdownMenu
+    // Estado para controlar la apertura del menú de la tarjeta
     var expanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -43,32 +71,12 @@ fun TarjetaProducto(
                 )
             }
 
-            // Contenedor del botón de opciones y el menú desplegable
+            // Ícono de 3 puntos que activa el estado expanded
             Box {
                 IconButton(onClick = { expanded = true }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Opciones de producto"
-                    )
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Editar producto") },
-                        onClick = {
-                            expanded = false
-                            onEditar()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Eliminar producto") },
-                        onClick = {
-                            expanded = false
-                            onEliminar()
-                        }
+                        contentDescription = "Opciones del producto"
                     )
                 }
             }
