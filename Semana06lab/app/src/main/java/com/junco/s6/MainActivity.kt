@@ -30,7 +30,7 @@ fun TECSUPStoreApp() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    
+
     var seccionActual by remember { mutableStateOf("Inicio") }
 
     ModalNavigationDrawer(
