@@ -20,6 +20,7 @@ import com.saludplus.citas.ui.screens.citas.MisCitasScreen
 import com.saludplus.citas.ui.screens.citas.ReprogramarCitaScreen
 import com.saludplus.citas.ui.screens.home.HomeScreen
 import com.saludplus.citas.ui.screens.notificaciones.NotificacionesScreen
+import com.saludplus.citas.ui.screens.perfil.AyudaScreen
 import com.saludplus.citas.ui.screens.perfil.PerfilScreen
 import com.saludplus.citas.ui.screens.resultados.ResultadosScreen
 
@@ -196,8 +197,12 @@ fun AppNavigation() {
                     navController.navigate(Rutas.SPLASH) {
                         popUpTo(Rutas.HOME) { inclusive = true }
                     }
-                }
+                },
+                onAyuda = { navController.navigate(Rutas.AYUDA) }
             )
+        }
+        composable(Rutas.AYUDA) {
+            AyudaScreen(onAtras = { navController.popBackStack() })
         }
     }
 }

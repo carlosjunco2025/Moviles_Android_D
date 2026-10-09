@@ -15,6 +15,7 @@ object Rutas {
     const val DETALLE_CITA = "detalleCita/{citaId}"
     const val REPROGRAMAR = "reprogramar/{citaId}"
     const val PERFIL = "perfil"
+    const val AYUDA = "ayuda"
     const val RESULTADOS = "resultados"
     const val NOTIFICACIONES = "notificaciones"
 

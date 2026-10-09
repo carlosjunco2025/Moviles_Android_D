@@ -18,9 +18,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ButtonDefaults
@@ -51,7 +53,8 @@ import com.saludplus.citas.ui.theme.RojoError
 @Composable
 fun PerfilScreen(
     onNavegar: (String) -> Unit,
-    onCerrarSesion: () -> Unit
+    onCerrarSesion: () -> Unit,
+    onAyuda: () -> Unit = {}
 ) {
     // Datos del usuario en sesión
     val usuario = Repositorio.usuarioActual
@@ -111,7 +114,42 @@ fun PerfilScreen(
                 }
             }
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(16.dp))
+
+            // Ayuda y preguntas frecuentes
+            TarjetaSuave(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onAyuda
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.HelpOutline,
+                            contentDescription = null,
+                            tint = AzulPrimario,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = "Ayuda y preguntas frecuentes",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AzulOscuro
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = GrisTexto
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
 
             // Cerrar sesión
             OutlinedButton(
