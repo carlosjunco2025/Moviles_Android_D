@@ -87,7 +87,9 @@ fun AppNavigation() {
                 onEspecialidad = { id -> navController.navigate(Rutas.medicos(id)) },
                 onVerEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) },
                 onNavegar = irA,
-                onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) }
+                onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) },
+                onTerminos = { navController.navigate(Rutas.TERMINOS) },
+                onAyuda = { navController.navigate(Rutas.AYUDA) }
             )
         }
         composable(Rutas.NOTIFICACIONES) {

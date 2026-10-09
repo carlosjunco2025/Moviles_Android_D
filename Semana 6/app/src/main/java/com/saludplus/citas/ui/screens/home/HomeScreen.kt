@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.EventAvailable
@@ -29,12 +30,19 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +62,9 @@ import com.saludplus.citas.ui.components.estiloEspecialidad
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNotificaciones: () -> Unit,
@@ -66,225 +76,316 @@ fun HomeScreen(
     onVerEspecialidades: () -> Unit,
     onNavegar: (String) -> Unit,
     onMedico: (Int) -> Unit = {},
+    onTerminos: () -> Unit = {},
+    onAyuda: () -> Unit = {},
     onMenu: () -> Unit = {}
 ) {
     val primerNombre = Repositorio.usuarioActual?.nombre
         ?.trim()?.split(" ")?.firstOrNull() ?: ""
     val destacadas = Repositorio.especialidadesDestacadas()
 
-    Scaffold(
-        containerColor = Color.White,
-        bottomBar = { BarraNavegacion(rutaActual = Rutas.HOME, onNavegar = onNavegar) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 8.dp)
-        ) {
-            // Menú (hamburguesa) y campana
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = Color.White,
+                modifier = Modifier.width(280.dp)
             ) {
-                IconButton(onClick = onMenu) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Menú",
-                        tint = AzulOscuro
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 24.dp)
+                ) {
+                    Text(
+                        text = "SaludPlus",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = AzulPrimario,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
-                }
-                IconButton(onClick = onNotificaciones) {
-                    Icon(
-                        imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notificaciones",
-                        tint = AzulOscuro
+                    Text(
+                        text = "Menú principal",
+                        fontSize = 14.sp,
+                        color = GrisTexto,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
+                    )
+
+                    Spacer(Modifier.height(20.dp))
+
+                    NavigationDrawerItem(
+                        label = { Text("Ayuda y preguntas frecuentes", fontWeight = FontWeight.SemiBold) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onAyuda()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.HelpOutline,
+                                contentDescription = null,
+                                tint = AzulPrimario
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+                    )
+
+                    NavigationDrawerItem(
+                        label = { Text("Términos y condiciones", fontWeight = FontWeight.SemiBold) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onTerminos()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Description,
+                                contentDescription = null,
+                                tint = AzulPrimario
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+                    )
+
+                    NavigationDrawerItem(
+                        label = { Text("Centro de notificaciones", fontWeight = FontWeight.SemiBold) },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onNotificaciones()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null,
+                                tint = AzulPrimario
+                            )
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
                     )
                 }
             }
-
-            // Saludo
-            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                Text(
-                    text = "¡Hola, $primerNombre!",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = AzulOscuro
-                )
-                Text(
-                    text = "¿Qué deseas hacer hoy?",
-                    fontSize = 15.sp,
-                    color = GrisTexto
-                )
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            // Cuadrícula 2x2 de accesos rápidos
+        }
+    ) {
+        Scaffold(
+            containerColor = Color.White,
+            bottomBar = { BarraNavegacion(rutaActual = Rutas.HOME, onNavegar = onNavegar) }
+        ) { padding ->
             Column(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 8.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AccesoRapido(
-                        titulo = "Agendar cita",
-                        icono = Icons.Default.CalendarMonth,
-                        colorIcono = Color(0xFF2563EB),
-                        fondo = Color(0xFFE3EDFF),
-                        onClick = onAgendar,
-                        modifier = Modifier.weight(1f)
-                    )
-                    AccesoRapido(
-                        titulo = "Mis citas",
-                        icono = Icons.Default.EventAvailable,
-                        colorIcono = Color(0xFF22A05B),
-                        fondo = Color(0xFFDDF3E6),
-                        onClick = onMisCitas,
-                        modifier = Modifier.weight(1f)
-                    )
+                // Menú (hamburguesa) y campana
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        scope.launch { drawerState.open() }
+                        onMenu()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menú",
+                            tint = AzulOscuro
+                        )
+                    }
+                    IconButton(onClick = onNotificaciones) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Notificaciones",
+                            tint = AzulOscuro
+                        )
+                    }
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AccesoRapido(
-                        titulo = "Mis datos",
-                        icono = Icons.Default.Person,
-                        colorIcono = Color(0xFF7C4DFF),
-                        fondo = Color(0xFFEBE3FF),
-                        onClick = onMisDatos,
-                        modifier = Modifier.weight(1f)
-                    )
-                    AccesoRapido(
-                        titulo = "Resultados",
-                        icono = Icons.Default.Description,
-                        colorIcono = Color(0xFFF28C28),
-                        fondo = Color(0xFFFFEBD6),
-                        onClick = onResultados,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
 
-            // Sección de médicos favoritos (si existen)
-            val favoritos = Repositorio.medicosFavoritos()
-            if (favoritos.isNotEmpty()) {
+                // Saludo
+                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                    Text(
+                        text = "¡Hola, $primerNombre!",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = AzulOscuro
+                    )
+                    Text(
+                        text = "¿Qué deseas hacer hoy?",
+                        fontSize = 15.sp,
+                        color = GrisTexto
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                // Cuadrícula 2x2 de accesos rápidos
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AccesoRapido(
+                            titulo = "Agendar cita",
+                            icono = Icons.Default.CalendarMonth,
+                            colorIcono = Color(0xFF2563EB),
+                            fondo = Color(0xFFE3EDFF),
+                            onClick = onAgendar,
+                            modifier = Modifier.weight(1f)
+                        )
+                        AccesoRapido(
+                            titulo = "Mis citas",
+                            icono = Icons.Default.EventAvailable,
+                            colorIcono = Color(0xFF22A05B),
+                            fondo = Color(0xFFDDF3E6),
+                            onClick = onMisCitas,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AccesoRapido(
+                            titulo = "Mis datos",
+                            icono = Icons.Default.Person,
+                            colorIcono = Color(0xFF7C4DFF),
+                            fondo = Color(0xFFEBE3FF),
+                            onClick = onMisDatos,
+                            modifier = Modifier.weight(1f)
+                        )
+                        AccesoRapido(
+                            titulo = "Resultados",
+                            icono = Icons.Default.Description,
+                            colorIcono = Color(0xFFF28C28),
+                            fondo = Color(0xFFFFEBD6),
+                            onClick = onResultados,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+
+                // Sección de médicos favoritos (si existen)
+                val favoritos = Repositorio.medicosFavoritos()
+                if (favoritos.isNotEmpty()) {
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        text = "Mis médicos favoritos",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = AzulOscuro,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(favoritos, key = { it.id }) { medico ->
+                            val especialidad = Repositorio.obtenerEspecialidad(medico.especialidadId)
+                            TarjetaSuave(
+                                modifier = Modifier.width(140.dp),
+                                onClick = { onMedico(medico.id) }
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    AvatarMedico(nombre = medico.nombre, foto = medico.foto)
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        text = medico.nombre,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = AzulOscuro,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = especialidad?.nombre ?: "",
+                                        fontSize = 12.sp,
+                                        color = GrisTexto,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Spacer(Modifier.height(24.dp))
-                Text(
-                    text = "Mis médicos favoritos",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AzulOscuro,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
+
+                // Título de la sección y "Ver todas"
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Especialidades destacadas",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = AzulOscuro,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Ver todas",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AzulPrimario,
+                        modifier = Modifier.clickable { onVerEspecialidades() }
+                    )
+                }
+
                 Spacer(Modifier.height(12.dp))
+
+                // LazyRow de especialidades destacadas
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(favoritos, key = { it.id }) { medico ->
-                        val especialidad = Repositorio.obtenerEspecialidad(medico.especialidadId)
+                    items(destacadas) { especialidad ->
+                        val estilo = estiloEspecialidad(especialidad.id)
                         TarjetaSuave(
-                            modifier = Modifier.width(140.dp),
-                            onClick = { onMedico(medico.id) }
+                            modifier = Modifier.width(120.dp),
+                            onClick = { onEspecialidad(especialidad.id) }
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                AvatarMedico(nombre = medico.nombre, foto = medico.foto)
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(CircleShape)
+                                        .background(estilo.fondo),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = estilo.icono,
+                                        contentDescription = null,
+                                        tint = estilo.color,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
                                 Spacer(Modifier.height(8.dp))
                                 Text(
-                                    text = medico.nombre,
+                                    text = especialidad.nombre,
                                     fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = AzulOscuro,
                                     textAlign = TextAlign.Center,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = especialidad?.nombre ?: "",
-                                    fontSize = 12.sp,
-                                    color = GrisTexto,
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 1,
+                                    minLines = 2,
+                                    maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(24.dp))
-
-            // Título de la sección y "Ver todas"
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Especialidades destacadas",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AzulOscuro,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "Ver todas",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AzulPrimario,
-                    modifier = Modifier.clickable { onVerEspecialidades() }
-                )
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            // LazyRow de especialidades destacadas
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(destacadas) { especialidad ->
-                    val estilo = estiloEspecialidad(especialidad.id)
-                    TarjetaSuave(
-                        modifier = Modifier.width(120.dp),
-                        onClick = { onEspecialidad(especialidad.id) }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .background(estilo.fondo),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = estilo.icono,
-                                    contentDescription = null,
-                                    tint = estilo.color,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = especialidad.nombre,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AzulOscuro,
-                                textAlign = TextAlign.Center,
-                                minLines = 2,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
                         }
                     }
                 }
