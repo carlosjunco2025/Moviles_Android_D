@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.navigation.Rutas
+import com.saludplus.citas.ui.components.AvatarMedico
 import com.saludplus.citas.ui.components.BarraNavegacion
 import com.saludplus.citas.ui.components.TarjetaSuave
 import com.saludplus.citas.ui.components.estiloEspecialidad
@@ -64,6 +65,7 @@ fun HomeScreen(
     onEspecialidad: (Int) -> Unit,
     onVerEspecialidades: () -> Unit,
     onNavegar: (String) -> Unit,
+    onMedico: (Int) -> Unit = {},
     onMenu: () -> Unit = {}
 ) {
     val primerNombre = Repositorio.usuarioActual?.nombre
@@ -162,6 +164,57 @@ fun HomeScreen(
                         onClick = onResultados,
                         modifier = Modifier.weight(1f)
                     )
+                }
+            }
+
+            // Sección de médicos favoritos (si existen)
+            val favoritos = Repositorio.medicosFavoritos()
+            if (favoritos.isNotEmpty()) {
+                Spacer(Modifier.height(24.dp))
+                Text(
+                    text = "Mis médicos favoritos",
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AzulOscuro,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+                Spacer(Modifier.height(12.dp))
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(favoritos, key = { it.id }) { medico ->
+                        val especialidad = Repositorio.obtenerEspecialidad(medico.especialidadId)
+                        TarjetaSuave(
+                            modifier = Modifier.width(140.dp),
+                            onClick = { onMedico(medico.id) }
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                AvatarMedico(nombre = medico.nombre, foto = medico.foto)
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    text = medico.nombre,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AzulOscuro,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = especialidad?.nombre ?: "",
+                                    fontSize = 12.sp,
+                                    color = GrisTexto,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

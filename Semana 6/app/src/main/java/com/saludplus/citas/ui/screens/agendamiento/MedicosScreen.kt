@@ -1,6 +1,10 @@
 package com.saludplus.citas.ui.screens.agendamiento
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -34,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,9 +65,15 @@ fun MedicosScreen(
 
     var buscando by remember { mutableStateOf(false) }
     var busqueda by remember { mutableStateOf("") }
+    var soloFavoritos by remember { mutableStateOf(false) }
 
     // Médicos de la especialidad, ordenados por calificación y filtrados por el buscador
-    val medicos = Repositorio.buscarMedicos(especialidadId, busqueda)
+    val medicosBase = Repositorio.buscarMedicos(especialidadId, busqueda)
+    val medicos = if (soloFavoritos) {
+        medicosBase.filter { Repositorio.esFavorito(it.id) }
+    } else {
+        medicosBase
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -119,6 +132,34 @@ fun MedicosScreen(
                 )
             }
 
+            // Chip "Solo favoritos"
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(if (soloFavoritos) AzulPrimario else Color(0xFFF1F5FB))
+                        .clickable { soloFavoritos = !soloFavoritos }
+                        .padding(horizontal = 14.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (soloFavoritos) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        tint = if (soloFavoritos) Color.White else GrisTexto,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "Solo favoritos",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (soloFavoritos) Color.White else AzulOscuro
+                    )
+                }
+            }
+
             if (medicos.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -127,7 +168,7 @@ fun MedicosScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Text(
-                        text = "No se encontraron médicos",
+                        text = if (soloFavoritos) "No tienes médicos favoritos en esta especialidad" else "No se encontraron médicos",
                         fontSize = 15.sp,
                         color = GrisTexto,
                         textAlign = TextAlign.Center,
@@ -177,6 +218,25 @@ fun MedicosScreen(
                                             color = GrisTexto
                                         )
                                     }
+                                }
+
+                                // Botón de favorito con animación de escala
+                                val esFav = Repositorio.esFavorito(medico.id)
+                                val escala by animateFloatAsState(
+                                    targetValue = if (esFav) 1.2f else 1.0f,
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                    label = "EscalaFavorito"
+                                )
+                                IconButton(
+                                    onClick = { Repositorio.alternarFavorito(medico.id) },
+                                    modifier = Modifier.size(48.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (esFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = if (esFav) "Quitar de favoritos" else "Marcar como favorito",
+                                        tint = if (esFav) Color(0xFFE53935) else GrisTexto,
+                                        modifier = Modifier.scale(escala)
+                                    )
                                 }
                             }
 

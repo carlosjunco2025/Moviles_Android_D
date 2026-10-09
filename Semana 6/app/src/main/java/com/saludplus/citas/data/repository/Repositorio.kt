@@ -1,5 +1,6 @@
 package com.saludplus.citas.data.repository
 
+import androidx.compose.runtime.mutableStateMapOf
 import com.saludplus.citas.data.model.Especialidad
 import com.saludplus.citas.data.model.Medico
 import com.saludplus.citas.data.model.Usuario
@@ -97,6 +98,32 @@ object Repositorio {
     fun buscarMedicos(especialidadId: Int, texto: String): List<Medico> {
         return medicosPorEspecialidad(especialidadId)
             .filter { it.nombre.contains(texto.trim(), ignoreCase = true) }
+    }
+
+    // ---------- FAVORITOS ----------
+    val favoritosMap = mutableStateMapOf<Pair<String, Int>, Boolean>()
+
+    fun esFavorito(medicoId: Int): Boolean {
+        val usuario = usuarioActual ?: return false
+        return favoritosMap[usuario.correo.lowercase() to medicoId] == true
+    }
+
+    fun alternarFavorito(medicoId: Int) {
+        val usuario = usuarioActual ?: return
+        val key = usuario.correo.lowercase() to medicoId
+        if (favoritosMap[key] == true) {
+            favoritosMap.remove(key)
+        } else {
+            favoritosMap[key] = true
+        }
+    }
+
+    fun medicosFavoritos(): List<Medico> {
+        val usuario = usuarioActual ?: return emptyList()
+        val ids = favoritosMap.entries
+            .filter { it.key.first == usuario.correo.lowercase() && it.value }
+            .map { it.key.second }
+        return medicos.filter { it.id in ids }
     }
 
     // ---------- CITAS ----------
