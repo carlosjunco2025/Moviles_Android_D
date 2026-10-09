@@ -111,6 +111,8 @@ Semana 6/
 
 Las siguientes capturas muestran las principales pantallas de Clínica SaludPlus. Se presentan en filas de tres imágenes para facilitar su visualización.
 
+### Capturas de la Fase 1 (sin-ia)
+
 <table>
   <tr>
     <td align="center" width="33%">
@@ -192,6 +194,39 @@ Las siguientes capturas muestran las principales pantallas de Clínica SaludPlus
   </tr>
 </table>
 
+### Capturas de la Fase 2 (mejora con-ia)
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <strong>17. Búsqueda de médicos</strong><br>
+      <img src="docs/capturas/17_busqueda_medicos.jpeg" width="220" alt="Búsqueda de médicos">
+    </td>
+    <td align="center" width="33%">
+      <strong>18. Médicos favoritos</strong><br>
+      <img src="docs/capturas/18_medicos_favoritos.jpeg" width="220" alt="Médicos favoritos">
+    </td>
+    <td align="center" width="33%">
+      <strong>19. Inicio con médicos favoritos</strong><br>
+      <img src="docs/capturas/18_inicio_medicos_favoritos.jpeg" width="220" alt="Inicio con médicos favoritos">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <strong>20. Reprogramación de cita</strong><br>
+      <img src="docs/capturas/19_reprogramar_cita.jpeg" width="220" alt="Reprogramación de cita">
+    </td>
+    <td align="center" width="33%">
+      <strong>21. Ayuda y preguntas frecuentes</strong><br>
+      <img src="docs/capturas/20_ayuda_preguntas_frecuentes.jpeg" width="220" alt="Ayuda y preguntas frecuentes">
+    </td>
+    <td align="center" width="33%">
+      <strong>22. Menú lateral interactivo</strong><br>
+      <img src="docs/capturas/21_menu_hamburguesa.jpeg" width="220" alt="Menú lateral interactivo">
+    </td>
+  </tr>
+</table>
+
 ## Flujo de navegación
 
 ```text
@@ -227,9 +262,58 @@ Splash
 
 El desarrollo de Clínica SaludPlus permite aplicar conocimientos de programación móvil, diseño de interfaces y navegación entre pantallas. La aplicación reúne funcionalidades básicas para el registro de pacientes y la gestión de citas médicas, y constituye una base para futuras mejoras, como la integración de una base de datos y la autenticación persistente.
 
+## Fase 2 (con-ia)
+
+> **Nota de procedencia:** La Fase 2 se desarrolló con Gemini en Android Studio; los commits de la Fase 1 conservan sus autores originales.
+
+En la Fase 2 se implementaron mejoras clave utilizando IA para elevar la funcionalidad y experiencia de usuario de la aplicación.
+
+### Mejoras implementadas
+
+1. **Soporte de API y Utilidades de Fechas:**
+   - Se actualizó el `minSdk` a 26 en `build.gradle.kts`.
+   - Se crearon utilidades de fecha (`util/Fechas.kt`) basadas en `java.time.LocalDate` para cálculo de días hábiles, nombres de días, meses y formateo en español ("Martes 6 de setiembre 2026").
+2. **Calendario Dinámico:**
+   - Integración de un selector interactivo de fechas en la pantalla de Fecha y hora con navegación por semanas hábiles, marcas del día actual ("Hoy"), animaciones en el cambio de semanas y recálculo automático de horarios.
+3. **Formateo de Fechas en Español:**
+   - Presentación de fechas en lenguaje natural y en español en los módulos de confirmación y detalle de citas.
+4. **Médicos Favoritos:**
+   - Selección y persistencia en memoria de médicos favoritos por usuario (`SnapshotStateMap`).
+   - Botón de corazón interactivo, chip de filtrado en el listado de médicos y carrusel rápido en la pantalla de inicio.
+5. **Búsqueda Dinámica de Médicos:**
+   - Búsqueda por nombre directamente desde la pantalla de Especialidades a partir de 2 caracteres.
+6. **Prevención de Citas Solapadas:**
+   - Verificación de disponibilidad horaria del paciente para evitar reservas duplicadas en el mismo horario.
+7. **Reprogramación de Citas:**
+   - Reutilización del selector de fecha y hora (`SelectorFechaHora.kt`) para reprogramar citas existentes conservando el ID y liberando el turno anterior.
+8. **Centro de Ayuda y Preguntas Frecuentes:**
+   - Pantalla interactiva con acordeón (`AnimatedVisibility`) y rotación de íconos para resolver dudas comunes de la aplicación.
+9. **Menú Hamburguesa Lateral Interactivo:**
+   - Integración de `ModalNavigationDrawer` deslizable en la pantalla principal para acceder rápidamente a Ayuda, Términos y Notificaciones.
+
+### Limitaciones conocidas
+
+- Todos los datos nuevos (favoritos, reprogramaciones y citas solapadas) viven temporalmente en el objeto `Repositorio` en memoria y no persisten al cerrar o reiniciar la aplicación.
+
+### Historial de commits de la Fase 2 (`con-ia`)
+
+```text
+f71a3e9 | Carlos Junco | carlos.junco@tecsup.edu.pe | Agregar funcionalidad al menu hamburguesa lateral en Inicio
+5bad8fc | Carlos Junco | carlos.junco@tecsup.edu.pe | Agregar la pantalla de Ayuda y Preguntas Frecuentes
+4f61d7e | Carlos Junco | carlos.junco@tecsup.edu.pe | Implementar la reprogramacion de citas y extraer SelectorFechaHora
+2becaef | Carlos Junco | carlos.junco@tecsup.edu.pe | Evitar el agendamiento de citas solapadas para el mismo paciente
+464035f | Carlos Junco | carlos.junco@tecsup.edu.pe | Permitir busqueda de medicos por nombre desde la pantalla de Especialidades
+8bc65e9 | Carlos Junco | carlos.junco@tecsup.edu.pe | Implementar seleccion y visualizacion de medicos favoritos por usuario
+e677086 | Carlos Junco | carlos.junco@tecsup.edu.pe | Formatear fechas en texto en espanol en la confirmacion y detalle de cita
+efe602d | Carlos Junco | carlos.junco@tecsup.edu.pe | Implementar calendario dinamico en la seleccion de fecha y hora
+d070cdf | Carlos Junco | carlos.junco@tecsup.edu.pe | Crear utilidades de fechas con LocalDate para gestion del calendario
+70b4b78 | Carlos Junco | carlos.junco@tecsup.edu.pe | Actualizar minSdk a nivel 26 para soporte nativo de LocalDate
+```
+
 ## Información académica
 
 **Autor:** Carlos Junco  
 **Curso:** Programación en Móviles  
 **Proyecto:** Clínica SaludPlus — App Paciente  
 **Repositorio:** [GitHub - Moviles_Android_D](https://github.com/carlosjunco2025/Moviles_Android_D)
+
