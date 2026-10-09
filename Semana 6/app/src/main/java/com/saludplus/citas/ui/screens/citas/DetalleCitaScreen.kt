@@ -47,6 +47,7 @@ import com.saludplus.citas.ui.components.BarraSuperior
 import com.saludplus.citas.ui.components.BotonAzul
 import com.saludplus.citas.ui.components.FilaDetalle
 import com.saludplus.citas.ui.theme.AzulOscuro
+import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
 import com.saludplus.citas.ui.theme.RojoError
 import com.saludplus.citas.util.fechaEnTexto
@@ -65,7 +66,8 @@ private fun Separador() {
 fun DetalleCitaScreen(
     citaId: Int,
     onAtras: () -> Unit,
-    onCancelada: () -> Unit
+    onCancelada: () -> Unit,
+    onReprogramar: (Int) -> Unit = {}
 ) {
     val contexto = LocalContext.current
     val cita = Repositorio.obtenerCita(citaId)
@@ -183,6 +185,20 @@ fun DetalleCitaScreen(
                 )
 
                 Spacer(Modifier.height(24.dp))
+
+                OutlinedButton(
+                    onClick = { onReprogramar(citaId) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.5.dp, AzulPrimario),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = AzulPrimario)
+                ) {
+                    Text("Reprogramar cita", fontWeight = FontWeight.SemiBold)
+                }
+
+                Spacer(Modifier.height(12.dp))
 
                 OutlinedButton(
                     onClick = { mostrarDialogo = true },

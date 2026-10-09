@@ -13,6 +13,7 @@ object Rutas {
     const val CITA_EXITOSA = "citaExitosa"
     const val MIS_CITAS = "misCitas"
     const val DETALLE_CITA = "detalleCita/{citaId}"
+    const val REPROGRAMAR = "reprogramar/{citaId}"
     const val PERFIL = "perfil"
     const val RESULTADOS = "resultados"
     const val NOTIFICACIONES = "notificaciones"
@@ -23,4 +24,5 @@ object Rutas {
     fun confirmarCita(medicoId: Int, fecha: String, hora: String) =
         "confirmarCita/$medicoId/$fecha/$hora"
     fun detalleCita(citaId: Int) = "detalleCita/$citaId"
+    fun reprogramar(citaId: Int) = "reprogramar/$citaId"
 }

@@ -196,6 +196,27 @@ object Repositorio {
         return citas.removeIf { it.id == id }
     }
 
+    // Reprograma una cita existente conservando su ID
+    fun reprogramarCita(citaId: Int, fecha: String, hora: String): Boolean {
+        val usuario = usuarioActual ?: return false
+        val index = citas.indexOfFirst { it.id == citaId && it.correoUsuario.equals(usuario.correo, ignoreCase = true) }
+        if (index == -1) return false
+
+        val citaExistente = citas[index]
+
+        // Comprueba si el médico ya está ocupado en la nueva fecha/hora (excluyendo la cita actual)
+        val medicoOcupado = citas.any {
+            it.medicoId == citaExistente.medicoId && it.fecha == fecha && it.hora == hora && it.id != citaId
+        }
+        if (medicoOcupado) return false
+
+        // Comprueba solapamiento del paciente (excluyendo la cita actual)
+        if (tieneCitaEn(fecha, hora, excluirCitaId = citaId)) return false
+
+        citas[index] = citaExistente.copy(fecha = fecha, hora = hora)
+        return true
+    }
+
     // ---------- RESULTADOS ----------
     // Lista fija de ejemplo: es la misma para todos los usuarios
     val resultados = listOf(

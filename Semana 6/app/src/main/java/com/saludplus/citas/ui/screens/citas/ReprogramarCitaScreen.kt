@@ -1,4 +1,4 @@
-package com.saludplus.citas.ui.screens.agendamiento
+package com.saludplus.citas.ui.screens.citas
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -31,24 +31,27 @@ import com.saludplus.citas.ui.components.BotonAzul
 import com.saludplus.citas.ui.components.SelectorFechaHora
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.GrisTexto
+import com.saludplus.citas.ui.theme.RojoError
 
 @Composable
-fun FechaHoraScreen(
-    medicoId: Int,
+fun ReprogramarCitaScreen(
+    citaId: Int,
     onAtras: () -> Unit,
-    onContinuar: (fecha: String, hora: String) -> Unit
+    onReprogramada: () -> Unit
 ) {
-    val medico = Repositorio.obtenerMedico(medicoId)
-    val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
+    val cita = Repositorio.obtenerCita(citaId)
+    val medico = cita?.let { Repositorio.obtenerMedico(it.medicoId) }
+    val especialidad = cita?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
 
     var fechaSeleccionada by remember { mutableStateOf<String?>(null) }
     var horaSeleccionada by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
 
-    val puedeContinuar = !fechaSeleccionada.isNullOrEmpty() && !horaSeleccionada.isNullOrEmpty()
+    val puedeConfirmar = !fechaSeleccionada.isNullOrEmpty() && !horaSeleccionada.isNullOrEmpty()
 
     Scaffold(
         containerColor = Color.White,
-        topBar = { BarraSuperior(titulo = "Seleccionar fecha y hora", onAtras = onAtras) }
+        topBar = { BarraSuperior(titulo = "Reprogramar cita", onAtras = onAtras) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -56,7 +59,6 @@ fun FechaHoraScreen(
                 .padding(padding)
                 .padding(horizontal = 20.dp)
         ) {
-            // Card del médico
             if (medico != null) {
                 Row(
                     modifier = Modifier
@@ -86,29 +88,49 @@ fun FechaHoraScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            SelectorFechaHora(
-                medicoId = medicoId,
-                fechaSeleccionada = fechaSeleccionada,
-                horaSeleccionada = horaSeleccionada,
-                onFechaSeleccionada = { fecha ->
-                    fechaSeleccionada = if (fecha.isEmpty()) null else fecha
-                    horaSeleccionada = null
-                },
-                onHoraSeleccionada = { hora ->
-                    horaSeleccionada = hora
-                },
-                modifier = Modifier.weight(1f)
-            )
+            if (medico != null) {
+                SelectorFechaHora(
+                    medicoId = medico.id,
+                    fechaSeleccionada = fechaSeleccionada,
+                    horaSeleccionada = horaSeleccionada,
+                    onFechaSeleccionada = { fecha ->
+                        fechaSeleccionada = if (fecha.isEmpty()) null else fecha
+                        horaSeleccionada = null
+                        error = null
+                    },
+                    onHoraSeleccionada = { hora ->
+                        horaSeleccionada = hora
+                        error = null
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            if (error != null) {
+                Text(
+                    text = error ?: "",
+                    fontSize = 14.sp,
+                    color = RojoError,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
 
             Spacer(Modifier.height(12.dp))
 
             BotonAzul(
-                texto = "Continuar",
-                habilitado = puedeContinuar,
+                texto = "Confirmar nuevo horario",
+                habilitado = puedeConfirmar,
                 onClick = {
                     val fecha = fechaSeleccionada
                     val hora = horaSeleccionada
-                    if (!fecha.isNullOrEmpty() && !hora.isNullOrEmpty()) onContinuar(fecha, hora)
+                    if (!fecha.isNullOrEmpty() && !hora.isNullOrEmpty()) {
+                        val exito = Repositorio.reprogramarCita(citaId, fecha, hora)
+                        if (exito) {
+                            onReprogramada()
+                        } else {
+                            error = "El horario seleccionado no está disponible o entra en conflicto con otra cita."
+                        }
+                    }
                 }
             )
 

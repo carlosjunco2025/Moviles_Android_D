@@ -17,6 +17,7 @@ import com.saludplus.citas.ui.screens.auth.SplashScreen
 import com.saludplus.citas.ui.screens.auth.TerminosScreen
 import com.saludplus.citas.ui.screens.citas.DetalleCitaScreen
 import com.saludplus.citas.ui.screens.citas.MisCitasScreen
+import com.saludplus.citas.ui.screens.citas.ReprogramarCitaScreen
 import com.saludplus.citas.ui.screens.home.HomeScreen
 import com.saludplus.citas.ui.screens.notificaciones.NotificacionesScreen
 import com.saludplus.citas.ui.screens.perfil.PerfilScreen
@@ -167,7 +168,23 @@ fun AppNavigation() {
             DetalleCitaScreen(
                 citaId = citaId,
                 onAtras = { navController.popBackStack() },
-                onCancelada = { navController.popBackStack() }
+                onCancelada = { navController.popBackStack() },
+                onReprogramar = { id -> navController.navigate(Rutas.reprogramar(id)) }
+            )
+        }
+        composable(
+            route = Rutas.REPROGRAMAR,
+            arguments = listOf(navArgument("citaId") { type = NavType.IntType })
+        ) { entrada ->
+            val contexto = androidx.compose.ui.platform.LocalContext.current
+            val citaId = entrada.arguments?.getInt("citaId") ?: 0
+            ReprogramarCitaScreen(
+                citaId = citaId,
+                onAtras = { navController.popBackStack() },
+                onReprogramada = {
+                    android.widget.Toast.makeText(contexto, "Cita reprogramada", android.widget.Toast.LENGTH_SHORT).show()
+                    navController.popBackStack()
+                }
             )
         }
         composable(Rutas.RESULTADOS) { ResultadosScreen(onNavegar = irA) }
