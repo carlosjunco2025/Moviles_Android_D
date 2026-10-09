@@ -94,7 +94,8 @@ fun AppNavigation() {
         composable(Rutas.ESPECIALIDADES) {
             EspecialidadesScreen(
                 onAtras = { navController.popBackStack() },
-                onEspecialidad = { id -> navController.navigate(Rutas.medicos(id)) }
+                onEspecialidad = { id -> navController.navigate(Rutas.medicos(id)) },
+                onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) }
             )
         }
         composable(

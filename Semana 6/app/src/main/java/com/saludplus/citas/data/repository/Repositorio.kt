@@ -100,6 +100,15 @@ object Repositorio {
             .filter { it.nombre.contains(texto.trim(), ignoreCase = true) }
     }
 
+    // Busca médicos por nombre en todas las especialidades (mínimo 2 caracteres)
+    fun buscarMedicosPorNombre(texto: String): List<Medico> {
+        val query = texto.trim()
+        if (query.length < 2) return emptyList()
+        return medicos
+            .filter { it.nombre.contains(query, ignoreCase = true) }
+            .sortedByDescending { it.calificacion }
+    }
+
     // ---------- FAVORITOS ----------
     val favoritosMap = mutableStateMapOf<Pair<String, Int>, Boolean>()
 
