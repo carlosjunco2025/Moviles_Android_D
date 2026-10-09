@@ -375,13 +375,30 @@ Comienza con el Paso 0 y continúa en orden. Si no puedes ejecutar comandos, ent
 
 ---
 
-## Mejoras Realizadas Adicionales (Fuera del Prompt Inicial)
+## Prompt 1 (Sistema de Sedes y Mis Doctores)
 
-Durante la sesión de desarrollo y refinamiento de la aplicación, se implementaron mejoras adicionales para optimizar la experiencia de usuario y completar detalles funcionales que no estaban contemplados o explícitos en el prompt inicial:
+### Tarea aplicada:
+Implementación del sistema de SEDES (flujo de Agendar Cita por sede y sustitución de Mis citas por pantalla Sedes) y del módulo "Mis doctores" (médicos favoritos agrupados por especialidad) con autoría local bajo "Carlos Fernando Junco Santiago".
 
-1. **Menú Lateral Interactivo (`ModalNavigationDrawer`):**
-   - Se habilitó la funcionalidad completa del menú lateral en la pantalla de Inicio (`HomeScreen.kt`) utilizando `ModalNavigationDrawer` y `ModalDrawerSheet` de Material 3.
-   - Permite al paciente desplegar un panel lateral con accesos directos a "Ayuda y preguntas frecuentes", "Términos y condiciones" y "Centro de notificaciones".
+### Resumen de la respuesta:
+1. **Modelos y Repositorio:**
+   - Creación de `Sede.kt` y adición de `sedeId` al modelo `Medico` asignando sedes ficticias a los médicos.
+   - Funciones en `Repositorio` para consultas por sede (`sedes`, `obtenerSede`, `sedeDelMedico`, `medicosPorSede`, `especialidadesPorSede`, `medicosPorSedeYEspecialidad`, `citasPorSede`, `cantidadCitasUsuario`).
+   - Funciones de favoritos por usuario (`esFavorito`, `alternarFavorito`, `medicosFavoritos`, `cantidadFavoritos`, `medicosFavoritosPorEspecialidad`).
+2. **Pantallas y Componentes:**
+   - `ElegirSedeScreen.kt`: Selección de sede con conteo de especialidades y doctores.
+   - `EspecialidadesSedeScreen.kt`: Filtrado de especialidades disponibles por sede.
+   - `MedicosScreen.kt`: Adaptada con parámetro opcional `sedeId` e indicador visual de la sede.
+   - `ConfirmarCitaScreen.kt` y `DetalleCitaScreen.kt`: Presentación de la sede y dirección correspondiente.
+   - `SedesScreen.kt`: Reemplazo de Mis citas por vista de citas agrupadas por sede con encabezados y etiquetas de estado.
+   - `TarjetaMedico.kt`: Componente extraído con botón de corazón animado y aviso snackbar.
+   - `MisDoctoresScreen.kt`: Listado de médicos favoritos agrupados por especialidad con opción Deshacer.
+   - `HomeScreen.kt` y `BarraNavegacion.kt`: Tarjetas "Agendar cita" (a Elegir Sede), "Sedes", y nueva tarjeta de ancho completo "Mis doctores", actualizando la barra inferior de navegación a 4 destinos (Inicio, Sedes, Resultados, Perfil).
+
+### Correcciones realizadas durante la sesión:
+- Se ajustaron los límites de caracteres en los asuntos de los mensajes de commit para no superar los 72 caracteres de la norma del proyecto.
+- Se configuró la autoría local de Git a `Carlos Fernando Junco Santiago` y `carlos.junco@tecsup.edu.pe`.
 
 ---
 
+Correcciones manuales del usuario: pendiente de completar
