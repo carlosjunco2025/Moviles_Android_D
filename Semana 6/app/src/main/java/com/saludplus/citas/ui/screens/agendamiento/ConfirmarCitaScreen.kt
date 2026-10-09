@@ -44,6 +44,7 @@ import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
 import com.saludplus.citas.ui.theme.RojoError
+import com.saludplus.citas.util.fechaEnTexto
 
 // La cita dura 30 minutos: la hora de fin es la hora elegida + 30 min
 private fun horaFin(hora: String): String {
@@ -135,7 +136,7 @@ fun ConfirmarCitaScreen(
                 FilaDetalle(
                     icono = Icons.Default.DateRange,
                     titulo = "Fecha",
-                    valor = fecha,
+                    valor = fechaEnTexto(fecha),
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
                 Separador()

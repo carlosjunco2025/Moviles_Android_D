@@ -43,6 +43,7 @@ import com.saludplus.citas.ui.theme.AzulClaro
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
+import com.saludplus.citas.util.fechaEnTexto
 
 @Composable
 fun MisCitasScreen(
@@ -158,7 +159,7 @@ fun MisCitasScreen(
                         Row(modifier = Modifier.fillMaxWidth()) {
                             DatoCita(
                                 icono = Icons.Default.DateRange,
-                                texto = cita.fecha,
+                                texto = fechaEnTexto(cita.fecha),
                                 modifier = Modifier.weight(1f)
                             )
                             DatoCita(

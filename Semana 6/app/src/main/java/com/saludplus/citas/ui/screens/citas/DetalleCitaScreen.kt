@@ -49,6 +49,7 @@ import com.saludplus.citas.ui.components.FilaDetalle
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.GrisTexto
 import com.saludplus.citas.ui.theme.RojoError
+import com.saludplus.citas.util.fechaEnTexto
 
 @Composable
 private fun Separador() {
@@ -156,7 +157,7 @@ fun DetalleCitaScreen(
                 FilaDetalle(
                     icono = Icons.Default.DateRange,
                     titulo = "Fecha",
-                    valor = cita.fecha,
+                    valor = fechaEnTexto(cita.fecha),
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
                 Separador()
