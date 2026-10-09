@@ -93,7 +93,8 @@ fun AppNavigation() {
                 onNavegar = irA,
                 onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) },
                 onTerminos = { navController.navigate(Rutas.TERMINOS) },
-                onAyuda = { navController.navigate(Rutas.AYUDA) }
+                onAyuda = { navController.navigate(Rutas.AYUDA) },
+                onMisDoctores = { navController.navigate(Rutas.MIS_DOCTORES) }
             )
         }
         composable(Rutas.NOTIFICACIONES) {
@@ -143,7 +144,7 @@ fun AppNavigation() {
             MisDoctoresScreen(
                 onAtras = { navController.popBackStack() },
                 onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) },
-                onVerEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) }
+                onVerEspecialidades = { navController.navigate(Rutas.ELEGIR_SEDE) }
             )
         }
         composable(Rutas.ESPECIALIDADES) {
