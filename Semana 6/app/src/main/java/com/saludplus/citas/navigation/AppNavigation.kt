@@ -82,7 +82,7 @@ fun AppNavigation() {
         composable(Rutas.HOME) {
             HomeScreen(
                 onNotificaciones = { navController.navigate(Rutas.NOTIFICACIONES) },
-                onAgendar = { navController.navigate(Rutas.ESPECIALIDADES) },
+                onAgendar = { navController.navigate(Rutas.ELEGIR_SEDE) },
                 onMisCitas = { irA(Rutas.MIS_CITAS) },
                 onMisDatos = { irA(Rutas.PERFIL) },
                 onResultados = { irA(Rutas.RESULTADOS) },

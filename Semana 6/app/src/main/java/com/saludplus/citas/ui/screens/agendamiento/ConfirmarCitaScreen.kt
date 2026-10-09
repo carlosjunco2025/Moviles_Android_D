@@ -76,6 +76,8 @@ fun ConfirmarCitaScreen(
 ) {
     val medico = Repositorio.obtenerMedico(medicoId)
     val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
+    val sede = medico?.let { Repositorio.sedeDelMedico(it.id) }
+    val direccionTexto = if (sede != null) "${sede.nombre} · ${sede.direccion}" else "Av. Los Olivos 123, Lima"
 
     var motivo by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -157,7 +159,7 @@ fun ConfirmarCitaScreen(
                 FilaDetalle(
                     icono = Icons.Default.LocationOn,
                     titulo = "Dirección",
-                    valor = "Av. Los Olivos 123, Lima",
+                    valor = direccionTexto,
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 

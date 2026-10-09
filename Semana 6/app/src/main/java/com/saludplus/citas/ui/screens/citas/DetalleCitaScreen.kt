@@ -73,6 +73,8 @@ fun DetalleCitaScreen(
     val cita = Repositorio.obtenerCita(citaId)
     val medico = cita?.let { Repositorio.obtenerMedico(it.medicoId) }
     val especialidad = cita?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
+    val sede = medico?.let { Repositorio.sedeDelMedico(it.id) }
+    val direccionTexto = if (sede != null) "${sede.nombre} · ${sede.direccion}" else "Av. Los Olivos 123, Lima"
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
@@ -180,7 +182,7 @@ fun DetalleCitaScreen(
                 FilaDetalle(
                     icono = Icons.Default.LocationOn,
                     titulo = "Dirección",
-                    valor = "Av. Los Olivos 123, Lima",
+                    valor = direccionTexto,
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
