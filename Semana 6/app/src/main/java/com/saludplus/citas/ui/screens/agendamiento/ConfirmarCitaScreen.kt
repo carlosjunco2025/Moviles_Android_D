@@ -204,16 +204,20 @@ fun ConfirmarCitaScreen(
                 texto = "Agendar cita",
                 onClick = {
                     if (medico != null) {
-                        val guardada = Repositorio.agendarCita(
-                            medicoId = medico.id,
-                            especialidadId = medico.especialidadId,
-                            fecha = fecha,
-                            hora = hora
-                        )
-                        if (guardada) {
-                            onConfirmada()
+                        if (Repositorio.tieneCitaEn(fecha, hora)) {
+                            error = "Ya tienes una cita el ${fechaEnTexto(fecha)} a las $hora. Elige otro horario."
                         } else {
-                            error = "Ese horario ya no está disponible. Regresa y elige otro."
+                            val guardada = Repositorio.agendarCita(
+                                medicoId = medico.id,
+                                especialidadId = medico.especialidadId,
+                                fecha = fecha,
+                                hora = hora
+                            )
+                            if (guardada) {
+                                onConfirmada()
+                            } else {
+                                error = "Ese horario ya no está disponible. Regresa y elige otro."
+                            }
                         }
                     }
                 }

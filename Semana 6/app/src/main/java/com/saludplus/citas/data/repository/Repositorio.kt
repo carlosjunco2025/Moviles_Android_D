@@ -154,6 +154,17 @@ object Repositorio {
         return horariosBase.filter { it !in ocupados }
     }
 
+    // Comprueba si el usuario en sesión ya tiene una cita agendada en esa fecha y hora
+    fun tieneCitaEn(fecha: String, hora: String, excluirCitaId: Int? = null): Boolean {
+        val usuario = usuarioActual ?: return false
+        return citas.any {
+            it.correoUsuario.equals(usuario.correo, ignoreCase = true) &&
+                    it.fecha == fecha &&
+                    it.hora == hora &&
+                    (excluirCitaId == null || it.id != excluirCitaId)
+        }
+    }
+
     // Crea la cita para el usuario en sesión. Devuelve false si no hay sesión
     // o si ese médico ya tiene una cita en esa fecha y hora.
     fun agendarCita(medicoId: Int, especialidadId: Int, fecha: String, hora: String): Boolean {
