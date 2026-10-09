@@ -20,6 +20,7 @@ import com.saludplus.citas.ui.screens.auth.TerminosScreen
 import com.saludplus.citas.ui.screens.citas.DetalleCitaScreen
 import com.saludplus.citas.ui.screens.citas.MisCitasScreen
 import com.saludplus.citas.ui.screens.citas.ReprogramarCitaScreen
+import com.saludplus.citas.ui.screens.doctores.MisDoctoresScreen
 import com.saludplus.citas.ui.screens.home.HomeScreen
 import com.saludplus.citas.ui.screens.notificaciones.NotificacionesScreen
 import com.saludplus.citas.ui.screens.perfil.AyudaScreen
@@ -136,6 +137,13 @@ fun AppNavigation() {
                 onNavegar = irA,
                 onAgendar = { navController.navigate(Rutas.ELEGIR_SEDE) },
                 onCita = { citaId -> navController.navigate(Rutas.detalleCita(citaId)) }
+            )
+        }
+        composable(Rutas.MIS_DOCTORES) {
+            MisDoctoresScreen(
+                onAtras = { navController.popBackStack() },
+                onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) },
+                onVerEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) }
             )
         }
         composable(Rutas.ESPECIALIDADES) {
