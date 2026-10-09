@@ -19,6 +19,13 @@ object Rutas {
     const val RESULTADOS = "resultados"
     const val NOTIFICACIONES = "notificaciones"
 
+    // Rutas nuevas para sedes y mis doctores
+    const val ELEGIR_SEDE = "elegirSede"
+    const val SEDE_ESPECIALIDADES = "sedeEspecialidades/{sedeId}"
+    const val SEDE_MEDICOS = "sedeMedicos/{sedeId}/{especialidadId}"
+    const val SEDES = "sedes"
+    const val MIS_DOCTORES = "misDoctores"
+
     // Funciones que arman la ruta con el parámetro ya puesto
     fun medicos(especialidadId: Int) = "medicos/$especialidadId"
     fun fechaHora(medicoId: Int) = "fechaHora/$medicoId"
@@ -26,4 +33,7 @@ object Rutas {
         "confirmarCita/$medicoId/$fecha/$hora"
     fun detalleCita(citaId: Int) = "detalleCita/$citaId"
     fun reprogramar(citaId: Int) = "reprogramar/$citaId"
+
+    fun sedeEspecialidades(sedeId: Int) = "sedeEspecialidades/$sedeId"
+    fun sedeMedicos(sedeId: Int, especialidadId: Int) = "sedeMedicos/$sedeId/$especialidadId"
 }

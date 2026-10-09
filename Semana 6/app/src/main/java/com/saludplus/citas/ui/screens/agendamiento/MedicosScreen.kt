@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -53,22 +54,37 @@ import com.saludplus.citas.ui.components.TarjetaSuave
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
+import com.saludplus.citas.ui.theme.VerdeSedes
+import com.saludplus.citas.ui.theme.VerdeSedesFondo
 
 @Composable
 fun MedicosScreen(
     especialidadId: Int,
+    sedeId: Int? = null,
     onAtras: () -> Unit,
     onMedico: (Int) -> Unit
 ) {
     val especialidad = Repositorio.obtenerEspecialidad(especialidadId)
     val nombreEspecialidad = especialidad?.nombre ?: "Especialidad"
+    val sede = sedeId?.let { Repositorio.obtenerSede(it) }
 
     var buscando by remember { mutableStateOf(false) }
     var busqueda by remember { mutableStateOf("") }
     var soloFavoritos by remember { mutableStateOf(false) }
 
-    // Médicos de la especialidad, ordenados por calificación y filtrados por el buscador
-    val medicosBase = Repositorio.buscarMedicos(especialidadId, busqueda)
+    // Médicos de la especialidad (y sede si aplica), ordenados por calificación y filtrados por el buscador
+    val medicosEspecialidad = if (sedeId != null) {
+        Repositorio.medicosPorSedeYEspecialidad(sedeId, especialidadId)
+    } else {
+        Repositorio.buscarMedicos(especialidadId, "")
+    }
+
+    val medicosBase = if (busqueda.trim().isNotEmpty()) {
+        medicosEspecialidad.filter { it.nombre.contains(busqueda.trim(), ignoreCase = true) }
+    } else {
+        medicosEspecialidad
+    }
+
     val medicos = if (soloFavoritos) {
         medicosBase.filter { Repositorio.esFavorito(it.id) }
     } else {
@@ -101,6 +117,31 @@ fun MedicosScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Franja indicadora de Sede (si sedeId no es nulo)
+            if (sede != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(VerdeSedesFondo)
+                        .padding(horizontal = 20.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = VerdeSedes,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "Sede ${sede.nombre}",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AzulOscuro
+                    )
+                }
+            }
+
             // Buscador (aparece al tocar la lupa)
             if (buscando) {
                 OutlinedTextField(
@@ -161,6 +202,12 @@ fun MedicosScreen(
             }
 
             if (medicos.isEmpty()) {
+                val mensajeVacio = when {
+                    soloFavoritos && sede != null -> "No tienes médicos favoritos en esta sede"
+                    soloFavoritos -> "No tienes médicos favoritos en esta especialidad"
+                    sede != null -> "No se encontraron médicos en la ${sede.nombre}"
+                    else -> "No se encontraron médicos"
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -168,7 +215,7 @@ fun MedicosScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Text(
-                        text = if (soloFavoritos) "No tienes médicos favoritos en esta especialidad" else "No se encontraron médicos",
+                        text = mensajeVacio,
                         fontSize = 15.sp,
                         color = GrisTexto,
                         textAlign = TextAlign.Center,

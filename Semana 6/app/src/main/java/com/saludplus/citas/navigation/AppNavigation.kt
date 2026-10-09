@@ -8,6 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.saludplus.citas.ui.screens.agendamiento.CitaExitosaScreen
 import com.saludplus.citas.ui.screens.agendamiento.ConfirmarCitaScreen
+import com.saludplus.citas.ui.screens.agendamiento.ElegirSedeScreen
+import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesSedeScreen
 import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
 import com.saludplus.citas.ui.screens.agendamiento.FechaHoraScreen
 import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
@@ -94,6 +96,39 @@ fun AppNavigation() {
         }
         composable(Rutas.NOTIFICACIONES) {
             NotificacionesScreen(onAtras = { navController.popBackStack() })
+        }
+        composable(Rutas.ELEGIR_SEDE) {
+            ElegirSedeScreen(
+                onAtras = { navController.popBackStack() },
+                onSede = { sedeId -> navController.navigate(Rutas.sedeEspecialidades(sedeId)) }
+            )
+        }
+        composable(
+            route = Rutas.SEDE_ESPECIALIDADES,
+            arguments = listOf(navArgument("sedeId") { type = NavType.IntType })
+        ) { entrada ->
+            val sedeId = entrada.arguments?.getInt("sedeId") ?: 0
+            EspecialidadesSedeScreen(
+                sedeId = sedeId,
+                onAtras = { navController.popBackStack() },
+                onEspecialidad = { espId -> navController.navigate(Rutas.sedeMedicos(sedeId, espId)) }
+            )
+        }
+        composable(
+            route = Rutas.SEDE_MEDICOS,
+            arguments = listOf(
+                navArgument("sedeId") { type = NavType.IntType },
+                navArgument("especialidadId") { type = NavType.IntType }
+            )
+        ) { entrada ->
+            val sedeId = entrada.arguments?.getInt("sedeId") ?: 0
+            val especialidadId = entrada.arguments?.getInt("especialidadId") ?: 0
+            MedicosScreen(
+                especialidadId = especialidadId,
+                sedeId = sedeId,
+                onAtras = { navController.popBackStack() },
+                onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) }
+            )
         }
         composable(Rutas.ESPECIALIDADES) {
             EspecialidadesScreen(
