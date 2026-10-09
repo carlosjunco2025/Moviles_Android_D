@@ -183,6 +183,24 @@ object Repositorio {
         return medicos.filter { it.id in ids }
     }
 
+    fun cantidadFavoritos(): Int {
+        return medicosFavoritos().size
+    }
+
+    fun medicosFavoritosPorEspecialidad(): List<Pair<Especialidad, List<Medico>>> {
+        val favs = medicosFavoritos()
+        if (favs.isEmpty()) return emptyList()
+
+        val agrupados = favs.groupBy { it.especialidadId }
+
+        return agrupados.mapNotNull { (espId, medicosGrupo) ->
+            val especialidad = obtenerEspecialidad(espId)
+            if (especialidad != null) {
+                especialidad to medicosGrupo.sortedByDescending { it.calificacion }
+            } else null
+        }.sortedBy { it.first.nombre }
+    }
+
     // ---------- CITAS ----------
     val citas = mutableListOf<Cita>()
     private var siguienteIdCita = 1
