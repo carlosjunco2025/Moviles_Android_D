@@ -8,5 +8,6 @@ data class Medico(
     val aniosExperiencia: Int,
     val resenas: Int,
     val disponibilidad: String,
-    val foto: String
+    val foto: String,
+    val sedeId: Int = 1
 )

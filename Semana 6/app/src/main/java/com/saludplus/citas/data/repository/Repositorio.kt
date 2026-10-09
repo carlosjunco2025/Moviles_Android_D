@@ -6,6 +6,7 @@ import com.saludplus.citas.data.model.Medico
 import com.saludplus.citas.data.model.Usuario
 import com.saludplus.citas.data.model.Cita
 import com.saludplus.citas.data.model.Resultado
+import com.saludplus.citas.data.model.Sede
 
 object Repositorio {
 
@@ -30,6 +31,51 @@ object Repositorio {
 
     fun cerrarSesion() {
         usuarioActual = null
+    }
+
+    // ---------- SEDES ----------
+    val sedes = listOf(
+        Sede(1, "Sede Los Olivos", "Av. Los Olivos 123, Los Olivos"),
+        Sede(2, "Sede San Isidro", "Av. Javier Prado Este 456, San Isidro"),
+        Sede(3, "Sede Santiago de Surco", "Av. Primavera 789, Santiago de Surco")
+    )
+
+    fun obtenerSede(id: Int): Sede? {
+        return sedes.find { it.id == id }
+    }
+
+    fun sedeDelMedico(medicoId: Int): Sede? {
+        return obtenerMedico(medicoId)?.let { obtenerSede(it.sedeId) }
+    }
+
+    fun medicosPorSede(sedeId: Int): List<Medico> {
+        return medicos.filter { it.sedeId == sedeId }
+    }
+
+    fun especialidadesPorSede(sedeId: Int): List<Especialidad> {
+        val espIds = medicosPorSede(sedeId).map { it.especialidadId }.toSet()
+        return especialidades.filter { it.id in espIds }
+    }
+
+    fun medicosPorSedeYEspecialidad(sedeId: Int, especialidadId: Int): List<Medico> {
+        return medicos
+            .filter { it.sedeId == sedeId && it.especialidadId == especialidadId }
+            .sortedByDescending { it.calificacion }
+    }
+
+    fun citasPorSede(): List<Pair<Sede, List<Cita>>> {
+        val citasUsuario = citasDelUsuario()
+        val citasPorSedeId = citasUsuario.groupBy { cita ->
+            obtenerMedico(cita.medicoId)?.sedeId ?: 1
+        }
+        return sedes.map { sede ->
+            val lista = citasPorSedeId[sede.id]?.sortedWith(compareBy({ it.fecha }, { it.hora })) ?: emptyList()
+            sede to lista
+        }
+    }
+
+    fun cantidadCitasUsuario(): Int {
+        return citasDelUsuario().size
     }
 
     // ---------- ESPECIALIDADES ----------
@@ -64,23 +110,23 @@ object Repositorio {
 
     // ---------- MÉDICOS ----------
     val medicos = listOf(
-        Medico(1, "Dra. Ana Torres", 1, 4.8, 12, 128, "Disponible hoy", retrato("women", 44)),
-        Medico(2, "Dr. Luis Ramírez", 1, 4.5, 8, 95, "Disponible mañana", retrato("men", 32)),
-        Medico(3, "Dr. Carlos Mendoza", 4, 4.9, 15, 210, "Disponible hoy", retrato("men", 45)),
-        Medico(4, "Dra. Lucía Vargas", 4, 4.6, 10, 87, "Disponible esta semana", retrato("women", 68)),
-        Medico(5, "Dra. Sofía Paredes", 2, 4.7, 9, 142, "Disponible hoy", retrato("women", 65)),
-        Medico(6, "Dr. Jorge Salazar", 2, 4.4, 6, 63, "Disponible mañana", retrato("men", 52)),
-        Medico(7, "Dra. Elena Rojas", 5, 4.8, 11, 119, "Disponible hoy", retrato("women", 26)),
-        Medico(8, "Dr. Miguel Castro", 6, 4.6, 7, 76, "Disponible esta semana", retrato("men", 75)),
-        Medico(9, "Dra. Patricia Núñez", 7, 4.7, 13, 134, "Disponible mañana", retrato("women", 33)),
-        Medico(10, "Dra. Valeria Cruz", 3, 4.9, 14, 156, "Disponible hoy", retrato("women", 90)),
-        Medico(11, "Dr. Andrés Flores", 8, 4.5, 10, 101, "Disponible esta semana", retrato("men", 18)),
-        Medico(12, "Dra. Claudia Rojas", 3, 4.8, 9, 112, "Disponible mañana", retrato("women", 17)),
-        Medico(13, "Dra. Mariana Soto", 3, 4.6, 7, 70, "Disponible esta semana", retrato("women", 79)),
-        Medico(14, "Dr. Ricardo León", 5, 4.5, 8, 64, "Disponible mañana", retrato("men", 61)),
-        Medico(15, "Dr. Fernando Ibarra", 6, 4.7, 10, 88, "Disponible hoy", retrato("men", 22)),
-        Medico(16, "Dr. Daniel Quispe", 7, 4.4, 6, 59, "Disponible hoy", retrato("men", 86)),
-        Medico(17, "Dra. Camila Herrera", 8, 4.8, 12, 97, "Disponible mañana", retrato("women", 12))
+        Medico(1, "Dra. Ana Torres", 1, 4.8, 12, 128, "Disponible hoy", retrato("women", 44), sedeId = 1),
+        Medico(2, "Dr. Luis Ramírez", 1, 4.5, 8, 95, "Disponible mañana", retrato("men", 32), sedeId = 2),
+        Medico(3, "Dr. Carlos Mendoza", 4, 4.9, 15, 210, "Disponible hoy", retrato("men", 45), sedeId = 1),
+        Medico(4, "Dra. Lucía Vargas", 4, 4.6, 10, 87, "Disponible esta semana", retrato("women", 68), sedeId = 2),
+        Medico(5, "Dra. Sofía Paredes", 2, 4.7, 9, 142, "Disponible hoy", retrato("women", 65), sedeId = 1),
+        Medico(6, "Dr. Jorge Salazar", 2, 4.4, 6, 63, "Disponible mañana", retrato("men", 52), sedeId = 2),
+        Medico(7, "Dra. Elena Rojas", 5, 4.8, 11, 119, "Disponible hoy", retrato("women", 26), sedeId = 1),
+        Medico(8, "Dr. Miguel Castro", 6, 4.6, 7, 76, "Disponible esta semana", retrato("men", 75), sedeId = 2),
+        Medico(9, "Dra. Patricia Núñez", 7, 4.7, 13, 134, "Disponible mañana", retrato("women", 33), sedeId = 1),
+        Medico(10, "Dra. Valeria Cruz", 3, 4.9, 14, 156, "Disponible hoy", retrato("women", 90), sedeId = 1),
+        Medico(11, "Dr. Andrés Flores", 8, 4.5, 10, 101, "Disponible esta semana", retrato("men", 18), sedeId = 2),
+        Medico(12, "Dra. Claudia Rojas", 3, 4.8, 9, 112, "Disponible mañana", retrato("women", 17), sedeId = 2),
+        Medico(13, "Dra. Mariana Soto", 3, 4.6, 7, 70, "Disponible esta semana", retrato("women", 79), sedeId = 3),
+        Medico(14, "Dr. Ricardo León", 5, 4.5, 8, 64, "Disponible mañana", retrato("men", 61), sedeId = 3),
+        Medico(15, "Dr. Fernando Ibarra", 6, 4.7, 10, 88, "Disponible hoy", retrato("men", 22), sedeId = 3),
+        Medico(16, "Dr. Daniel Quispe", 7, 4.4, 6, 59, "Disponible hoy", retrato("men", 86), sedeId = 2),
+        Medico(17, "Dra. Camila Herrera", 8, 4.8, 12, 97, "Disponible mañana", retrato("women", 12), sedeId = 3)
     )
 
     fun obtenerMedico(id: Int): Medico? {
@@ -117,14 +163,16 @@ object Repositorio {
         return favoritosMap[usuario.correo.lowercase() to medicoId] == true
     }
 
-    fun alternarFavorito(medicoId: Int) {
-        val usuario = usuarioActual ?: return
+    fun alternarFavorito(medicoId: Int): Boolean {
+        val usuario = usuarioActual ?: return false
         val key = usuario.correo.lowercase() to medicoId
-        if (favoritosMap[key] == true) {
-            favoritosMap.remove(key)
-        } else {
+        val nuevoEstado = favoritosMap[key] != true
+        if (nuevoEstado) {
             favoritosMap[key] = true
+        } else {
+            favoritosMap.remove(key)
         }
+        return nuevoEstado
     }
 
     fun medicosFavoritos(): List<Medico> {
