@@ -6,7 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.tuapp.navlab_Junco.screens.*
+import com.tuapp.navlab_Junco.screens.DetailScreen
+import com.tuapp.navlab_Junco.screens.HomeScreen
+import com.tuapp.navlab_Junco.screens.ListScreen
+import com.tuapp.navlab_Junco.screens.LoginScreen
+import com.tuapp.navlab_Junco.screens.ProfileScreen
 
 @Composable
 fun AppNavigation() {
@@ -29,7 +33,7 @@ fun AppNavigation() {
             ProfileScreen(navController)
         }
         composable(
-            route = Screen.Detail.route,
+            route = "detail/{itemId}",
             arguments = listOf(
                 navArgument("itemId") {
                     type = NavType.IntType
@@ -37,8 +41,11 @@ fun AppNavigation() {
                 }
             )
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 1
-            DetailScreen(navController, itemId)
+            val itemIdString = backStackEntry.arguments?.getString("itemId")
+            val itemId = backStackEntry.arguments?.getInt("itemId")
+                ?: itemIdString?.toIntOrNull()
+                ?: 1
+            DetailScreen(navController, itemId = itemId)
         }
     }
 }

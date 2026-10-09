@@ -1,6 +1,6 @@
 package com.tuapp.navlab_Junco.screens
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -8,38 +8,35 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.tuapp.navlab_Junco.navigation.Screen
 
 data class StudentInfo(
     val id: Int,
     val name: String,
-    val career: String,
-    val avatarUrl: String
+    val career: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(navController: NavController) {
     val students = listOf(
-        StudentInfo(1, "Carlos Fernando Junco", "Ingeniería de Software", "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300"),
-        StudentInfo(2, "Maria García", "Arquitectura", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=300"),
-        StudentInfo(3, "Carlos Pérez", "Medicina", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300"),
-        StudentInfo(4, "Ana López", "Derecho", "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=300"),
-        StudentInfo(5, "Luis Ramírez", "Administración", "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300")
+        StudentInfo(1, "Carlos Fernando Junco", "Ingeniería de Software"),
+        StudentInfo(2, "Maria García", "Arquitectura"),
+        StudentInfo(3, "Carlos Pérez", "Medicina"),
+        StudentInfo(4, "Ana López", "Derecho"),
+        StudentInfo(5, "Luis Ramírez", "Administración")
     )
 
     Scaffold(
@@ -108,16 +105,19 @@ fun ListScreen(navController: NavController) {
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Circular Student Photo Avatar
-                        AsyncImage(
-                            model = student.avatarUrl,
-                            contentDescription = student.name,
-                            contentScale = ContentScale.Crop,
+                        Box(
                             modifier = Modifier
                                 .size(50.dp)
-                                .clip(CircleShape)
-                                .border(1.5.dp, Color.White, CircleShape)
-                        )
+                                .background(Color(0xFFEADDFF), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = Color(0xFF4A2482),
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
 
                         Spacer(modifier = Modifier.width(16.dp))
 
