@@ -1,5 +1,12 @@
 package com.saludplus.citas.ui.screens.agendamiento
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,22 +51,10 @@ import com.saludplus.citas.ui.components.BotonAzul
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
-
-// Día mostrado en el selector. La fecha se guarda en formato ISO (año-mes-día).
-private data class DiaCalendario(
-    val fecha: String,
-    val diaSemana: String,
-    val numero: Int
-)
-
-// Fase 1: lista fija de días hábiles. En la Fase 2 se genera con LocalDate.
-private val diasDeLaSemana = listOf(
-    DiaCalendario("2026-10-05", "Lun", 5),
-    DiaCalendario("2026-10-06", "Mar", 6),
-    DiaCalendario("2026-10-07", "Mié", 7),
-    DiaCalendario("2026-10-08", "Jue", 8),
-    DiaCalendario("2026-10-09", "Vie", 9)
-)
+import com.saludplus.citas.util.mesYAnio
+import com.saludplus.citas.util.nombreDiaCorto
+import com.saludplus.citas.util.semanaDeCalendario
+import java.time.LocalDate
 
 @Composable
 fun FechaHoraScreen(
@@ -69,8 +65,18 @@ fun FechaHoraScreen(
     val medico = Repositorio.obtenerMedico(medicoId)
     val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
 
+    val hoy = remember { LocalDate.now() }
+    var indiceSemana by remember { mutableIntStateOf(0) }
     var fechaSeleccionada by remember { mutableStateOf<String?>(null) }
     var horaSeleccionada by remember { mutableStateOf<String?>(null) }
+
+    val diasVisibles = remember(hoy, indiceSemana) {
+        semanaDeCalendario(hoy, indiceSemana)
+    }
+
+    val tituloMesAnio = remember(diasVisibles) {
+        diasVisibles.firstOrNull()?.let { mesYAnio(it) } ?: ""
+    }
 
     // Horas libres de este médico en el día elegido (las reservadas no aparecen)
     val horarios = fechaSeleccionada
@@ -119,26 +125,41 @@ fun FechaHoraScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Mes y año con flechas (se activan en la Fase 2)
+            // Mes y año con flechas de navegación por semana
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /* Fase 2: semana anterior */ }) {
+                IconButton(
+                    onClick = {
+                        if (indiceSemana > 0) {
+                            indiceSemana--
+                            fechaSeleccionada = null
+                            horaSeleccionada = null
+                        }
+                    },
+                    enabled = indiceSemana > 0
+                ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Semana anterior",
-                        tint = GrisTexto
+                        tint = if (indiceSemana > 0) GrisTexto else GrisTexto.copy(alpha = 0.3f)
                     )
                 }
                 Text(
-                    text = "Octubre 2026",
+                    text = tituloMesAnio,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = AzulOscuro
                 )
-                IconButton(onClick = { /* Fase 2: semana siguiente */ }) {
+                IconButton(
+                    onClick = {
+                        indiceSemana++
+                        fechaSeleccionada = null
+                        horaSeleccionada = null
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Semana siguiente",
@@ -149,21 +170,39 @@ fun FechaHoraScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            // Selector de día
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                diasDeLaSemana.forEach { dia ->
-                    DiaChip(
-                        dia = dia,
-                        seleccionado = dia.fecha == fechaSeleccionada,
-                        onClick = {
-                            fechaSeleccionada = dia.fecha
-                            horaSeleccionada = null // al cambiar de día se reinicia la hora
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
+            // Selector de día con animación por semana
+            AnimatedContent(
+                targetState = indiceSemana,
+                label = "CambioSemana",
+                transitionSpec = {
+                    if (targetState > initialState) {
+                        slideInHorizontally { width -> width } + fadeIn() togetherWith
+                                slideOutHorizontally { width -> -width } + fadeOut()
+                    } else {
+                        slideInHorizontally { width -> -width } + fadeIn() togetherWith
+                                slideOutHorizontally { width -> width } + fadeOut()
+                    }.using(SizeTransform(clip = false))
+                }
+            ) { targetIndice ->
+                val dias = semanaDeCalendario(hoy, targetIndice)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    dias.forEach { fecha ->
+                        val fechaIso = fecha.toString()
+                        val esHoy = fecha == hoy
+                        DiaChip(
+                            fecha = fecha,
+                            esHoy = esHoy,
+                            seleccionado = fechaIso == fechaSeleccionada,
+                            onClick = {
+                                fechaSeleccionada = fechaIso
+                                horaSeleccionada = null // al cambiar de día se reinicia la hora
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
@@ -231,13 +270,14 @@ private fun MensajeCentrado(texto: String) {
 
 @Composable
 private fun DiaChip(
-    dia: DiaCalendario,
+    fecha: LocalDate,
+    esHoy: Boolean,
     seleccionado: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val fondo = if (seleccionado) AzulPrimario else Color(0xFFF1F5FB)
-    val textoDia = if (seleccionado) Color.White else GrisTexto
+    val textoDia = if (seleccionado) Color.White else if (esHoy) AzulPrimario else GrisTexto
     val textoNumero = if (seleccionado) Color.White else AzulOscuro
 
     Column(
@@ -249,10 +289,15 @@ private fun DiaChip(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = dia.diaSemana, fontSize = 12.sp, color = textoDia)
+        Text(
+            text = if (esHoy) "Hoy" else nombreDiaCorto(fecha),
+            fontSize = 12.sp,
+            fontWeight = if (esHoy) FontWeight.Bold else FontWeight.Normal,
+            color = textoDia
+        )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = dia.numero.toString(),
+            text = fecha.dayOfMonth.toString(),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = textoNumero
