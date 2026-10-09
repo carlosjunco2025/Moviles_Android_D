@@ -22,9 +22,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
@@ -63,6 +64,8 @@ import com.saludplus.citas.ui.components.estiloEspecialidad
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
+import com.saludplus.citas.ui.theme.TurquesaDoctores
+import com.saludplus.citas.ui.theme.TurquesaFondo
 import com.saludplus.citas.ui.theme.VerdeSedes
 import com.saludplus.citas.ui.theme.VerdeSedesFondo
 import kotlinx.coroutines.launch
@@ -81,7 +84,8 @@ fun HomeScreen(
     onMedico: (Int) -> Unit = {},
     onTerminos: () -> Unit = {},
     onAyuda: () -> Unit = {},
-    onMenu: () -> Unit = {}
+    onMenu: () -> Unit = {},
+    onMisDoctores: () -> Unit = {}
 ) {
     val primerNombre = Repositorio.usuarioActual?.nombre
         ?.trim()?.split(" ")?.firstOrNull() ?: ""
@@ -227,7 +231,7 @@ fun HomeScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // Cuadrícula 2x2 de accesos rápidos
+                // Cuadrícula 2x2 de accesos rápidos + 3ª fila de Mis doctores
                 Column(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -268,6 +272,26 @@ fun HomeScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
+
+                    // Tercera fila: tarjeta de ancho completo para Mis doctores
+                    val numFavs = Repositorio.cantidadFavoritos()
+                    val subtituloFavs = if (numFavs == 0) {
+                        "Aún no tienes favoritos"
+                    } else if (numFavs == 1) {
+                        "1 doctor guardado"
+                    } else {
+                        "$numFavs doctores guardados"
+                    }
+
+                    AccesoRapidoAncho(
+                        titulo = "Mis doctores",
+                        subtitulo = subtituloFavs,
+                        icono = Icons.Default.Favorite,
+                        colorTextoEIcono = TurquesaDoctores,
+                        fondo = TurquesaFondo,
+                        onClick = onMisDoctores,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
                 // Sección de médicos favoritos (si existen)
@@ -432,6 +456,69 @@ private fun AccesoRapido(
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = colorIcono
+            )
+        }
+    }
+}
+
+// Tarjeta de ancho completo para Mis doctores
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AccesoRapidoAncho(
+    titulo: String,
+    subtitulo: String,
+    icono: ImageVector,
+    colorTextoEIcono: Color,
+    fondo: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier.height(88.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = fondo),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.6f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icono,
+                    contentDescription = null,
+                    tint = colorTextoEIcono,
+                    modifier = Modifier.size(26.dp)
+                )
+            }
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = titulo,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorTextoEIcono
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = subtitulo,
+                    fontSize = 13.sp,
+                    color = GrisTexto
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = colorTextoEIcono
             )
         }
     }
