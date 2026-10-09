@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,7 +33,7 @@ private data class DestinoBarra(
 // Los 4 destinos del menú principal
 private val destinos = listOf(
     DestinoBarra(Rutas.HOME, "Inicio", Icons.Default.Home),
-    DestinoBarra(Rutas.MIS_CITAS, "Citas", Icons.Default.CalendarMonth),
+    DestinoBarra(Rutas.SEDES, "Sedes", Icons.Default.LocationOn),
     DestinoBarra(Rutas.RESULTADOS, "Resultados", Icons.Default.Description),
     DestinoBarra(Rutas.PERFIL, "Perfil", Icons.Default.Person)
 )

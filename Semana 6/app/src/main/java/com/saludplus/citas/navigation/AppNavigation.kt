@@ -25,6 +25,7 @@ import com.saludplus.citas.ui.screens.notificaciones.NotificacionesScreen
 import com.saludplus.citas.ui.screens.perfil.AyudaScreen
 import com.saludplus.citas.ui.screens.perfil.PerfilScreen
 import com.saludplus.citas.ui.screens.resultados.ResultadosScreen
+import com.saludplus.citas.ui.screens.sedes.SedesScreen
 
 @Composable
 fun AppNavigation() {
@@ -83,7 +84,7 @@ fun AppNavigation() {
             HomeScreen(
                 onNotificaciones = { navController.navigate(Rutas.NOTIFICACIONES) },
                 onAgendar = { navController.navigate(Rutas.ELEGIR_SEDE) },
-                onMisCitas = { irA(Rutas.MIS_CITAS) },
+                onMisCitas = { irA(Rutas.SEDES) },
                 onMisDatos = { irA(Rutas.PERFIL) },
                 onResultados = { irA(Rutas.RESULTADOS) },
                 onEspecialidad = { id -> navController.navigate(Rutas.medicos(id)) },
@@ -128,6 +129,13 @@ fun AppNavigation() {
                 sedeId = sedeId,
                 onAtras = { navController.popBackStack() },
                 onMedico = { medicoId -> navController.navigate(Rutas.fechaHora(medicoId)) }
+            )
+        }
+        composable(Rutas.SEDES) {
+            SedesScreen(
+                onNavegar = irA,
+                onAgendar = { navController.navigate(Rutas.ELEGIR_SEDE) },
+                onCita = { citaId -> navController.navigate(Rutas.detalleCita(citaId)) }
             )
         }
         composable(Rutas.ESPECIALIDADES) {
@@ -187,14 +195,14 @@ fun AppNavigation() {
         }
         composable(Rutas.CITA_EXITOSA) {
             CitaExitosaScreen(
-                onVerMisCitas = { irA(Rutas.MIS_CITAS) },
+                onVerMisCitas = { irA(Rutas.SEDES) },
                 onIrInicio = { navController.popBackStack(Rutas.HOME, false) }
             )
         }
         composable(Rutas.MIS_CITAS) {
             MisCitasScreen(
                 onNavegar = irA,
-                onAgendar = { navController.navigate(Rutas.ESPECIALIDADES) },
+                onAgendar = { navController.navigate(Rutas.ELEGIR_SEDE) },
                 onCita = { citaId -> navController.navigate(Rutas.detalleCita(citaId)) }
             )
         }

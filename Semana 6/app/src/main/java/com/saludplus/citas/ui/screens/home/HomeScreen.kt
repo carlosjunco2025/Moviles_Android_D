@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -62,6 +63,8 @@ import com.saludplus.citas.ui.components.estiloEspecialidad
 import com.saludplus.citas.ui.theme.AzulOscuro
 import com.saludplus.citas.ui.theme.AzulPrimario
 import com.saludplus.citas.ui.theme.GrisTexto
+import com.saludplus.citas.ui.theme.VerdeSedes
+import com.saludplus.citas.ui.theme.VerdeSedesFondo
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -239,10 +242,10 @@ fun HomeScreen(
                             modifier = Modifier.weight(1f)
                         )
                         AccesoRapido(
-                            titulo = "Mis citas",
-                            icono = Icons.Default.EventAvailable,
-                            colorIcono = Color(0xFF22A05B),
-                            fondo = Color(0xFFDDF3E6),
+                            titulo = "Sedes",
+                            icono = Icons.Default.LocationOn,
+                            colorIcono = VerdeSedes,
+                            fondo = VerdeSedesFondo,
                             onClick = onMisCitas,
                             modifier = Modifier.weight(1f)
                         )
