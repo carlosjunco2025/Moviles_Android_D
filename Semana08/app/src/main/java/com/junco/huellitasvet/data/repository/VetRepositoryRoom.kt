@@ -1,28 +1,22 @@
-package com.tecsup.huellitasvet.data.repository
+package com.junco.huellitasvet.data.repository
 
-import com.tecsup.huellitasvet.data.local.VetDatabase
-import com.tecsup.huellitasvet.data.local.entity.Servicio
+import com.junco.huellitasvet.data.local.VetDatabase
+import com.junco.huellitasvet.data.local.entity.Servicio
 import kotlinx.coroutines.flow.Flow
 
+/** Implementacion del contrato usando Room; cada funcion delega en el DAO correspondiente. */
 class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
 
-    // ---------- Servicios (ejemplo resuelto) ----------
-    override fun observarServicios(): Flow<List<Servicio>> = db.servicioDao().observarTodos()
+    private val servicios get() = db.servicioDao()
 
-    override fun observarServiciosActivos(): Flow<List<Servicio>> = db.servicioDao().observarActivos()
+    // ---- Servicios ----
+    override fun observarServicios(): Flow<List<Servicio>> = servicios.todos()
 
-    override suspend fun guardarServicio(s: Servicio) {
-        // id = 0 -> servicio nuevo; id > 0 -> actualiza el existente
-        if (s.id == 0) db.servicioDao().insertar(s) else db.servicioDao().actualizar(s)
-    }
+    override fun observarServiciosActivos(): Flow<List<Servicio>> = servicios.soloActivos()
 
-    override suspend fun eliminarServicio(s: Servicio) {
-        db.servicioDao().eliminar(s)
-    }
+    override suspend fun guardarServicio(servicio: Servicio) = servicios.guardar(servicio)
 
-    override suspend fun cambiarActivo(id: Int, activo: Boolean) {
-        db.servicioDao().cambiarActivo(id, activo)
-    }
+    override suspend fun eliminarServicio(servicio: Servicio) = servicios.borrar(servicio)
 
-    // TODO (Paso 4): Usuarios, Mascotas, Citas y Panel
+    override suspend fun cambiarActivo(id: Int, activo: Boolean) = servicios.marcarActivo(id, activo)
 }

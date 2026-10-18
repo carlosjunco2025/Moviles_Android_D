@@ -1,8 +1,10 @@
-package com.tecsup.huellitasvet.ui.navigation
+package com.junco.huellitasvet.ui.navigation
 
+/** Todas las rutas de la app en un solo lugar. Los {parametros} se rellenan con las funciones de abajo. */
 object Rutas {
     const val SPLASH = "splash"
     const val LOGIN = "login"
+    const val REGISTRO = "registro"
 
     // Dueño
     const val INICIO = "inicio"
@@ -11,6 +13,7 @@ object Rutas {
     const val FORM_MASCOTA = "form_mascota?id={id}"
     const val PEDIR_CITA = "pedir_cita?mascotaId={mascotaId}"
     const val MIS_CITAS = "mis_citas"
+    const val REPROGRAMAR = "reprogramar/{id}"
     const val PERFIL = "perfil"
 
     // Veterinario
@@ -24,7 +27,9 @@ object Rutas {
 
     fun fichaMascota(id: Int) = "ficha_mascota/$id"
     fun formMascota(id: Int? = null) = if (id == null) "form_mascota" else "form_mascota?id=$id"
-    fun pedirCita(mascotaId: Int? = null) = if (mascotaId == null) "pedir_cita" else "pedir_cita?mascotaId=$mascotaId"
+    fun pedirCita(mascotaId: Int? = null) =
+        if (mascotaId == null) "pedir_cita" else "pedir_cita?mascotaId=$mascotaId"
+    fun reprogramar(id: Int) = "reprogramar/$id"
     fun atenderCita(id: Int) = "atender_cita/$id"
     fun formServicio(id: Int? = null) = if (id == null) "form_servicio" else "form_servicio?id=$id"
 }

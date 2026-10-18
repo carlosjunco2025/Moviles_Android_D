@@ -1,40 +1,38 @@
-package com.tecsup.huellitasvet.data.local.dao
+package com.junco.huellitasvet.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import com.tecsup.huellitasvet.data.local.entity.Servicio
+import androidx.room.Upsert
+import com.junco.huellitasvet.data.local.entity.Servicio
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ServicioDao {
-    @Query("SELECT * FROM servicios ORDER BY nombre")
-    fun observarTodos(): Flow<List<Servicio>>
 
-    @Query("SELECT * FROM servicios WHERE activo = 1 ORDER BY nombre")
-    fun observarActivos(): Flow<List<Servicio>>
+    @Query("SELECT * FROM servicios ORDER BY nombre ASC")
+    fun todos(): Flow<List<Servicio>>
 
-    @Query("SELECT * FROM servicios WHERE id = :id")
-    suspend fun obtener(id: Int): Servicio?
+    @Query("SELECT * FROM servicios WHERE activo = 1 ORDER BY nombre ASC")
+    fun soloActivos(): Flow<List<Servicio>>
+
+    @Query("SELECT * FROM servicios WHERE id = :id LIMIT 1")
+    suspend fun buscar(id: Int): Servicio?
 
     @Query("SELECT COUNT(*) FROM servicios")
-    suspend fun contar(): Int
+    suspend fun cantidad(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertar(s: Servicio): Long
+    /** Inserta si el id es 0 y actualiza si ya existe: sirve para crear y editar. */
+    @Upsert
+    suspend fun guardar(servicio: Servicio)
 
     @Insert
-    suspend fun insertarTodos(lista: List<Servicio>)
-
-    @Update
-    suspend fun actualizar(s: Servicio)
+    suspend fun insertarVarios(servicios: List<Servicio>)
 
     @Delete
-    suspend fun eliminar(s: Servicio)
+    suspend fun borrar(servicio: Servicio)
 
     @Query("UPDATE servicios SET activo = :activo WHERE id = :id")
-    suspend fun cambiarActivo(id: Int, activo: Boolean)
+    suspend fun marcarActivo(id: Int, activo: Boolean)
 }

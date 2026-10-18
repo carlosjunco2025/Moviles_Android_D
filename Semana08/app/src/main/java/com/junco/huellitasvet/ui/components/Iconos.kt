@@ -1,4 +1,4 @@
-package com.tecsup.huellitasvet.ui.components
+package com.junco.huellitasvet.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCut
@@ -6,8 +6,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.ui.graphics.vector.ImageVector
 
-/** Convierte el texto guardado en Servicio.icono (heart, syringe, scissors) a un icono. */
-fun iconoServicio(icono: String): ImageVector = when (icono) {
+/** Servicio.icono guarda un texto (heart, syringe, scissors); aqui se convierte en icono. */
+fun iconoServicio(clave: String): ImageVector = when (clave) {
     "syringe" -> Icons.Filled.Vaccines
     "scissors" -> Icons.Filled.ContentCut
     else -> Icons.Filled.Favorite

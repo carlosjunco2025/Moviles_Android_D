@@ -1,10 +1,10 @@
-package com.tecsup.huellitasvet.data.local.relation
+package com.junco.huellitasvet.data.local.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.tecsup.huellitasvet.data.local.entity.Cita
-import com.tecsup.huellitasvet.data.local.entity.Mascota
-import com.tecsup.huellitasvet.data.local.entity.Servicio
+import com.junco.huellitasvet.data.local.entity.Cita
+import com.junco.huellitasvet.data.local.entity.Mascota
+import com.junco.huellitasvet.data.local.entity.Servicio
 
 /** Relacion anidada: cita -> mascota -> dueño, y cita -> servicio. */
 data class CitaConDetalle(

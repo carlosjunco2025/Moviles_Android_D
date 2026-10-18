@@ -1,15 +1,14 @@
-package com.tecsup.huellitasvet.viewmodel
+package com.junco.huellitasvet.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * Factory generica: se le pasa una lambda que construye el ViewModel con sus
- * dependencias (normalmente el repository). Uso:
+ * Factory generica: recibe una lambda que arma el ViewModel con sus dependencias.
  *
- *   viewModel(factory = VetViewModelFactory { MiViewModel(repo) })
+ *     viewModel(factory = VetViewModelFactory { MiViewModel(repo) })
  */
-class VetViewModelFactory<VM : ViewModel>(private val crear: () -> VM) : ViewModelProvider.Factory {
+class VetViewModelFactory<VM : ViewModel>(private val armar: () -> VM) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = crear() as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = armar() as T
 }

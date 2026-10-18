@@ -1,87 +1,88 @@
-package com.tecsup.huellitasvet.data.local.dao
+package com.junco.huellitasvet.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.tecsup.huellitasvet.data.local.entity.Cita
-import com.tecsup.huellitasvet.data.local.relation.CitaConDetalle
-import com.tecsup.huellitasvet.model.ConteoServicio
+import com.junco.huellitasvet.data.local.entity.Cita
+import com.junco.huellitasvet.data.local.relation.CitaConDetalle
+import com.junco.huellitasvet.model.ConteoServicio
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CitaDao {
 
-    // ---------- Escritura ----------
+    // ---- Escritura ----
     @Insert
-    suspend fun insertar(c: Cita): Long
+    suspend fun insertar(cita: Cita): Long
+
+    @Insert
+    suspend fun insertarVarias(citas: List<Cita>)
 
     @Query("UPDATE citas SET estado = :estado WHERE id = :id")
-    suspend fun actualizarEstado(id: Int, estado: String)
+    suspend fun cambiarEstado(id: Int, estado: String)
 
-    /** Pone estado ATENDIDA y guarda diagnostico, tratamiento y peso. */
+    @Query("SELECT * FROM citas WHERE id = :id")
+    suspend fun buscar(id: Int): Cita?
+
+    /** Cierra la cita: estado ATENDIDA + diagnostico, tratamiento y peso del dia. */
     @Query(
         "UPDATE citas SET estado = 'ATENDIDA', diagnostico = :diagnostico, " +
             "tratamiento = :tratamiento, pesoRegistrado = :peso WHERE id = :id"
     )
-    suspend fun registrarAtencion(id: Int, diagnostico: String, tratamiento: String, peso: Double)
+    suspend fun cerrarAtencion(id: Int, diagnostico: String, tratamiento: String, peso: Double)
 
-    @Query("SELECT * FROM citas WHERE id = :id")
-    suspend fun obtener(id: Int): Cita?
-
-    // ---------- Horarios ----------
-    /** Cuenta las citas NO canceladas con esa fecha y hora. */
+    // ---- Horarios ----
     @Query("SELECT COUNT(*) FROM citas WHERE fecha = :fecha AND hora = :hora AND estado != 'CANCELADA'")
-    suspend fun contarOcupadas(fecha: String, hora: String): Int
+    suspend fun contarEnHorario(fecha: String, hora: String): Int
 
     @Query("SELECT hora FROM citas WHERE fecha = :fecha AND estado != 'CANCELADA'")
-    fun observarHorasOcupadas(fecha: String): Flow<List<String>>
+    fun horasTomadas(fecha: String): Flow<List<String>>
 
-    // ---------- Lectura (Flow de CitaConDetalle) ----------
+    // ---- Lecturas con detalle ----
     @Transaction
     @Query(
         "SELECT c.* FROM citas c INNER JOIN mascotas m ON c.mascotaId = m.id " +
-            "WHERE m.duenoId = :duenoId ORDER BY c.fecha, c.hora"
+            "WHERE m.duenoId = :duenoId ORDER BY c.fecha ASC, c.hora ASC"
     )
-    fun observarPorDueno(duenoId: Int): Flow<List<CitaConDetalle>>
+    fun deDueno(duenoId: Int): Flow<List<CitaConDetalle>>
 
     @Transaction
-    @Query("SELECT * FROM citas WHERE fecha = :fecha ORDER BY hora")
-    fun observarPorFecha(fecha: String): Flow<List<CitaConDetalle>>
+    @Query("SELECT * FROM citas WHERE fecha = :fecha ORDER BY hora ASC")
+    fun deFecha(fecha: String): Flow<List<CitaConDetalle>>
 
     @Transaction
     @Query("SELECT * FROM citas WHERE id = :id")
-    fun observarUna(id: Int): Flow<CitaConDetalle?>
+    fun porId(id: Int): Flow<CitaConDetalle?>
 
-    /** Solo ATENDIDAS, la mas reciente primero. */
     @Transaction
     @Query(
         "SELECT * FROM citas WHERE mascotaId = :mascotaId AND estado = 'ATENDIDA' " +
             "ORDER BY fecha DESC, hora DESC"
     )
-    fun observarHistorial(mascotaId: Int): Flow<List<CitaConDetalle>>
+    fun historialDe(mascotaId: Int): Flow<List<CitaConDetalle>>
 
-    // ---------- Conteos de apoyo (reglas de eliminacion) ----------
+    // ---- Reglas de borrado ----
     @Query("SELECT COUNT(*) FROM citas WHERE servicioId = :servicioId")
-    suspend fun contarCitasDeServicio(servicioId: Int): Int
+    suspend fun cuantasDeServicio(servicioId: Int): Int
 
-    // ---------- Panel ----------
+    // ---- Panel ----
     @Query("SELECT COUNT(*) FROM citas WHERE fecha = :fecha AND estado != 'CANCELADA'")
-    fun contarPorFecha(fecha: String): Flow<Int>
+    fun totalDelDia(fecha: String): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM citas WHERE estado = :estado")
-    fun contarPorEstado(estado: String): Flow<Int>
+    fun totalConEstado(estado: String): Flow<Int>
 
     @Query(
         "SELECT s.nombre AS nombre, COUNT(c.id) AS total FROM citas c " +
             "INNER JOIN servicios s ON c.servicioId = s.id " +
-            "GROUP BY s.id ORDER BY s.nombre"
+            "GROUP BY s.id ORDER BY s.nombre ASC"
     )
-    fun contarPorServicio(): Flow<List<ConteoServicio>>
+    fun totalPorServicio(): Flow<List<ConteoServicio>>
 
     @Query(
         "SELECT COALESCE(SUM(precio), 0.0) FROM citas " +
-            "WHERE estado = 'ATENDIDA' AND fecha >= :fechaInicio"
+            "WHERE estado = 'ATENDIDA' AND fecha >= :desde"
     )
-    fun ingresosDesde(fechaInicio: String): Flow<Double>
+    fun ingresosDesde(desde: String): Flow<Double>
 }

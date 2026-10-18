@@ -1,6 +1,6 @@
-package com.tecsup.huellitasvet.model
+package com.junco.huellitasvet.model
 
-/** Resultado de la consulta GROUP BY: cuantas citas tiene cada servicio. */
+/** Fila del GROUP BY del panel: cuantas citas tiene cada servicio. */
 data class ConteoServicio(
     val nombre: String,
     val total: Int

@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.HuellitasVet" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Los colores reales los pone Compose (VetTheme); aqui solo el marco de la ventana. -->
+    <style name="Theme.HuellitasVet" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/marca_verde_profundo</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
 </resources>

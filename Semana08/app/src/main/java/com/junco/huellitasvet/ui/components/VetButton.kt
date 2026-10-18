@@ -1,4 +1,4 @@
-package com.tecsup.huellitasvet.ui.components
+package com.junco.huellitasvet.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tecsup.huellitasvet.ui.theme.ColorCancelada
+import com.junco.huellitasvet.ui.theme.ColorCancelada
 
+/** Boton a todo el ancho. [secundario] = solo borde; [peligro] lo pinta en rojo. */
 @Composable
 fun VetButton(
     texto: String,
@@ -24,23 +25,19 @@ fun VetButton(
     secundario: Boolean = false,
     peligro: Boolean = false
 ) {
-    val forma = RoundedCornerShape(14.dp)
-    val m = modifier
-        .fillMaxWidth()
-        .height(50.dp)
+    val forma = RoundedCornerShape(16.dp)
+    val medidas = modifier.fillMaxWidth().height(52.dp)
     if (secundario) {
         val color = if (peligro) ColorCancelada else MaterialTheme.colorScheme.primary
         OutlinedButton(
-            onClick = onClick,
-            modifier = m,
-            enabled = enabled,
-            shape = forma,
-            border = BorderStroke(1.dp, color),
+            onClick = onClick, modifier = medidas, enabled = enabled, shape = forma,
+            border = BorderStroke(1.5.dp, color),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = color)
         ) { Text(texto, fontWeight = FontWeight.Bold) }
     } else {
-        Button(onClick = onClick, modifier = m, enabled = enabled, shape = forma) {
-            Text(texto, fontWeight = FontWeight.Bold)
-        }
+        Button(
+            onClick = onClick, modifier = medidas, enabled = enabled, shape = forma,
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
+        ) { Text(texto, fontWeight = FontWeight.Bold) }
     }
 }

@@ -1,4 +1,4 @@
-package com.tecsup.huellitasvet.ui.components
+package com.junco.huellitasvet.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
+/** Campo de texto con etiqueta, icono opcional y mensaje de error debajo. */
 @Composable
 fun VetTextField(
     valor: String,
@@ -42,6 +43,6 @@ fun VetTextField(
         keyboardOptions = KeyboardOptions(keyboardType = teclado),
         singleLine = lineas == 1,
         minLines = lineas,
-        shape = RoundedCornerShape(14.dp)
+        shape = RoundedCornerShape(16.dp)
     )
 }

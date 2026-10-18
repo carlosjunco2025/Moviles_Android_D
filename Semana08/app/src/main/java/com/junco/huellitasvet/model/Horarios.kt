@@ -1,31 +1,39 @@
-package com.tecsup.huellitasvet.model
+package com.junco.huellitasvet.model
 
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Locale
 
-/** Genera los 18 horarios del dia: 09:00, 09:30 ... 17:30. */
+/** Los 18 horarios de atencion: de 09:00 a 17:30, cada 30 minutos. */
 object Horarios {
-    val todos: List<String> = (0 until 18).map { i ->
-        val minutos = 9 * 60 + i * 30
-        String.format(Locale.US, "%02d:%02d", minutos / 60, minutos % 60)
+    private val apertura: LocalTime = LocalTime.of(9, 0)
+
+    val todos: List<String> = List(18) { indice ->
+        apertura.plusMinutes(30L * indice).toString() // LocalTime.toString() ya da "09:00"
     }
 }
 
-/** Funciones de formato usadas por varias pantallas. */
+/** Funciones de formato compartidas por las pantallas. */
 object Formato {
-    private val dias = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
-    private val meses = listOf(
+    private val diasCortos = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+    private val mesesCortos = listOf(
         "ene", "feb", "mar", "abr", "may", "jun",
         "jul", "ago", "sep", "oct", "nov", "dic"
     )
 
-    fun diaSemana(f: LocalDate): String = dias[f.dayOfWeek.value - 1]
+    fun diaSemana(fecha: LocalDate): String = diasCortos[fecha.dayOfWeek.value - 1]
 
+    /** "2026-10-21" -> "Mié 21 oct" */
     fun fechaCorta(fecha: String): String {
         val d = LocalDate.parse(fecha)
-        return "${diaSemana(d)} ${d.dayOfMonth} ${meses[d.monthValue - 1]}"
+        return "${diaSemana(d)} ${d.dayOfMonth} ${mesesCortos[d.monthValue - 1]}"
+    }
+
+    /** "2026-10-21" -> "21 oct" */
+    fun fechaDiaMes(fecha: String): String {
+        val d = LocalDate.parse(fecha)
+        return "${d.dayOfMonth} ${mesesCortos[d.monthValue - 1]}"
     }
 
     fun fechaHora(fecha: String, hora: String): String = "${fechaCorta(fecha)} · $hora"

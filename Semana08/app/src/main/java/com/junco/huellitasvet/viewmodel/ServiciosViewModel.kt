@@ -1,22 +1,19 @@
-package com.tecsup.huellitasvet.viewmodel
+package com.junco.huellitasvet.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tecsup.huellitasvet.data.local.entity.Servicio
-import com.tecsup.huellitasvet.data.repository.VetRepository
-import kotlinx.coroutines.flow.SharingStarted
+import com.junco.huellitasvet.data.local.entity.Servicio
+import com.junco.huellitasvet.data.repository.VetRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ServiciosViewModel(private val repo: VetRepository) : ViewModel() {
 
-    val servicios: StateFlow<List<Servicio>> = repo.observarServicios()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val servicios: StateFlow<List<Servicio>> = repo.observarServicios().comoEstado(this, emptyList())
 
-    fun alternar(s: Servicio) {
-        viewModelScope.launch { repo.cambiarActivo(s.id, !s.activo) }
+    fun alternar(servicio: Servicio) {
+        viewModelScope.launch { repo.cambiarActivo(servicio.id, !servicio.activo) }
     }
-
-    // TODO (Paso 13): guardar(servicio) y eliminar(servicio)
 }
