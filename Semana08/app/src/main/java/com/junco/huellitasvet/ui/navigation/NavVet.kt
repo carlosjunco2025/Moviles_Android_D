@@ -35,6 +35,9 @@ import com.junco.huellitasvet.ui.theme.VetTheme
 import com.junco.huellitasvet.ui.veterinario.ServiciosScreen
 import com.junco.huellitasvet.viewmodel.ServiciosViewModel
 import com.junco.huellitasvet.viewmodel.VetViewModelFactory
+import com.junco.huellitasvet.ui.dueno.LoginScreen
+import com.junco.huellitasvet.ui.dueno.RegistroScreen
+import com.junco.huellitasvet.viewmodel.SesionViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -44,8 +47,14 @@ fun NavVet() {
     val app = LocalContext.current.applicationContext as VetApp
     val repo = app.repository
     val nav = rememberNavController()
-    val oscuro = false
-    val rolTema = Rol.ADMIN
+
+    // La sesion se comparte con toda la app (usuario, modo oscuro y preferencias)
+    val sesionVm: SesionViewModel = viewModel(
+        factory = VetViewModelFactory { SesionViewModel(repo, app.prefs) }
+    )
+    val usuario by sesionVm.usuarioActual.collectAsState()
+    val oscuro by sesionVm.modoOscuro.collectAsState()
+    val rolTema = if (usuario?.rol == Rol.ADMIN.name) Rol.ADMIN else Rol.CLIENTE
     val rutaActual = nav.currentBackStackEntryAsState().value?.destination?.route
 
     val pestanasDueno = listOf<Pestana>(
@@ -59,6 +68,22 @@ fun NavVet() {
         in rutasDueno -> pestanasDueno
         in rutasVet -> pestanasVet
         else -> emptyList()
+    }
+
+    /** Lleva a la pantalla principal del perfil y vacia la pila de navegacion. */
+    fun irAInicio(rol: Rol) {
+        val destino = Rutas.SERVICIOS
+        nav.navigate(destino) {
+            popUpTo(nav.graph.id) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    /** Borra la sesion guardada y vuelve al login. */
+    fun salir() {
+        sesionVm.cerrarSesion {
+            nav.navigate(Rutas.LOGIN) { popUpTo(nav.graph.id) { inclusive = true } }
+        }
     }
 
     VetTheme(rol = rolTema, oscuro = oscuro) {
@@ -99,8 +124,28 @@ fun NavVet() {
                 // ---------- Comunes ----------
                 composable(Rutas.SPLASH) {
                     SplashScreen(onComenzar = {
-                        nav.navigate(Rutas.SERVICIOS) { popUpTo(Rutas.SPLASH) { inclusive = true } }
+                        // Si quedo una sesion guardada se salta el login
+                        val u = usuario
+                        if (u != null) {
+                            irAInicio(Rol.valueOf(u.rol))
+                        } else {
+                            nav.navigate(Rutas.LOGIN) { popUpTo(Rutas.SPLASH) { inclusive = true } }
+                        }
                     })
+                }
+                composable(Rutas.LOGIN) {
+                    LoginScreen(
+                        sesionVm,
+                        onLogin = { rol -> irAInicio(rol) },
+                        onRegistro = { nav.navigate(Rutas.REGISTRO) }
+                    )
+                }
+                composable(Rutas.REGISTRO) {
+                    RegistroScreen(
+                        sesionVm,
+                        onRegistrado = { rol -> irAInicio(rol) },
+                        onVolver = { nav.popBackStack() }
+                    )
                 }
 
                 // ---------- Flujo del veterinario ----------
