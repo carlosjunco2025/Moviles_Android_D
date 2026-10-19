@@ -44,6 +44,8 @@ import com.junco.huellitasvet.viewmodel.InicioViewModel
 import com.junco.huellitasvet.ui.dueno.FichaMascotaScreen
 import com.junco.huellitasvet.ui.dueno.FormularioMascotaScreen
 import com.junco.huellitasvet.viewmodel.MascotaViewModel
+import com.junco.huellitasvet.ui.dueno.PedirCitaScreen
+import com.junco.huellitasvet.viewmodel.PedirCitaViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -167,7 +169,7 @@ fun NavVet() {
                         vm = vm,
                         onVerMascota = { nav.navigate(Rutas.fichaMascota(it)) },
                         onAgregar = { nav.navigate(Rutas.formMascota()) },
-                        onPedirCita = {},
+                        onPedirCita = { nav.navigate(Rutas.pedirCita()) },
                         onVerTodas = { nav.navigate(Rutas.MASCOTAS) { launchSingleTop = true } }
                     )
                 }
@@ -194,7 +196,7 @@ fun NavVet() {
                         id = id,
                         vm = vm,
                         onBack = { nav.popBackStack() },
-                        onPedirCita = {},
+                        onPedirCita = { nav.navigate(Rutas.pedirCita(it)) },
                         onEditar = { nav.navigate(Rutas.formMascota(it)) },
                         soloLectura = usuario?.rol == Rol.ADMIN.name
                     )
@@ -216,6 +218,26 @@ fun NavVet() {
                         duenoId = u.id,
                         vm = vm,
                         onBack = { nav.popBackStack() }
+                    )
+                }
+                composable(
+                    Rutas.PEDIR_CITA,
+                    arguments = listOf(navArgument("mascotaId") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    })
+                ) { entry ->
+                    val mascotaId = entry.arguments?.getInt("mascotaId") ?: -1
+                    val u = usuario ?: return@composable
+                    val vm: PedirCitaViewModel = viewModel(
+                        factory = VetViewModelFactory {
+                            PedirCitaViewModel(repo, app.prefs, u.id, mascotaId.takeIf { it > 0 })
+                        }
+                    )
+                    PedirCitaScreen(
+                        vm = vm,
+                        onBack = { nav.popBackStack() },
+                        onCreada = { nav.popBackStack() }
                     )
                 }
 
