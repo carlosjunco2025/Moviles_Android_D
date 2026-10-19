@@ -38,6 +38,9 @@ import com.junco.huellitasvet.viewmodel.VetViewModelFactory
 import com.junco.huellitasvet.ui.dueno.LoginScreen
 import com.junco.huellitasvet.ui.dueno.RegistroScreen
 import com.junco.huellitasvet.viewmodel.SesionViewModel
+import com.junco.huellitasvet.ui.dueno.InicioScreen
+import com.junco.huellitasvet.ui.dueno.MascotasScreen
+import com.junco.huellitasvet.viewmodel.InicioViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -58,6 +61,8 @@ fun NavVet() {
     val rutaActual = nav.currentBackStackEntryAsState().value?.destination?.route
 
     val pestanasDueno = listOf<Pestana>(
+        Pestana(Rutas.INICIO, "Inicio", Icons.Filled.Home),
+        Pestana(Rutas.MASCOTAS, "Mascotas", Icons.Filled.Pets),
     )
     val pestanasVet = listOf<Pestana>(
         Pestana(Rutas.SERVICIOS, "Servicios", Icons.Filled.LocalOffer),
@@ -72,7 +77,7 @@ fun NavVet() {
 
     /** Lleva a la pantalla principal del perfil y vacia la pila de navegacion. */
     fun irAInicio(rol: Rol) {
-        val destino = Rutas.SERVICIOS
+        val destino = if (rol == Rol.CLIENTE) Rutas.INICIO else Rutas.SERVICIOS
         nav.navigate(destino) {
             popUpTo(nav.graph.id) { inclusive = true }
             launchSingleTop = true
@@ -145,6 +150,34 @@ fun NavVet() {
                         sesionVm,
                         onRegistrado = { rol -> irAInicio(rol) },
                         onVolver = { nav.popBackStack() }
+                    )
+                }
+
+                // ---------- Flujo del dueño ----------
+                composable(Rutas.INICIO) {
+                    val u = usuario ?: return@composable
+                    val vm: InicioViewModel = viewModel(
+                        factory = VetViewModelFactory { InicioViewModel(repo, u.id) }
+                    )
+                    InicioScreen(
+                        nombre = u.nombre,
+                        vm = vm,
+                        // Las pantallas de mascota y de cita llegan en los siguientes commits
+                        onVerMascota = {},
+                        onAgregar = {},
+                        onPedirCita = {},
+                        onVerTodas = { nav.navigate(Rutas.MASCOTAS) { launchSingleTop = true } }
+                    )
+                }
+                composable(Rutas.MASCOTAS) {
+                    val u = usuario ?: return@composable
+                    val vm: InicioViewModel = viewModel(
+                        factory = VetViewModelFactory { InicioViewModel(repo, u.id) }
+                    )
+                    MascotasScreen(
+                        vm = vm,
+                        onVerMascota = {},
+                        onAgregar = {}
                     )
                 }
 

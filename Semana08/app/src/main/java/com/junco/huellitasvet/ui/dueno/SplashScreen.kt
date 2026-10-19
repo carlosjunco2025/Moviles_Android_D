@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.platform.*
 import androidx.compose.foundation.text.*
 import com.junco.huellitasvet.model.Especie
+import com.junco.huellitasvet.ui.components.MascotaAvatar
 import com.junco.huellitasvet.ui.theme.degradadoMarca
 
 /** Pantalla de bienvenida: fondo con degradado, logo y boton para entrar. */
@@ -55,6 +56,12 @@ fun SplashScreen(onComenzar: () -> Unit) {
                 color = Color.White.copy(alpha = 0.88f),
                 style = MaterialTheme.typography.bodyLarge
             )
+            Spacer(Modifier.height(30.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                MascotaAvatar(Especie.PERRO.name, tamano = 64.dp)
+                MascotaAvatar(Especie.GATO.name, tamano = 64.dp)
+                MascotaAvatar(Especie.OTRO.name, tamano = 64.dp)
+            }
             Spacer(Modifier.height(44.dp))
             Button(
                 onClick = onComenzar,
