@@ -52,6 +52,10 @@ import com.junco.huellitasvet.ui.veterinario.AgendaScreen
 import com.junco.huellitasvet.ui.veterinario.PanelScreen
 import com.junco.huellitasvet.viewmodel.AgendaViewModel
 import com.junco.huellitasvet.viewmodel.PanelViewModel
+import com.junco.huellitasvet.ui.veterinario.AtenderCitaScreen
+import com.junco.huellitasvet.ui.veterinario.PacientesScreen
+import com.junco.huellitasvet.viewmodel.AtenderCitaViewModel
+import com.junco.huellitasvet.viewmodel.PacientesViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -79,6 +83,7 @@ fun NavVet() {
     val pestanasVet = listOf<Pestana>(
         Pestana(Rutas.PANEL, "Panel", Icons.Filled.BarChart),
         Pestana(Rutas.AGENDA, "Agenda", Icons.Filled.CalendarMonth),
+        Pestana(Rutas.PACIENTES, "Pacientes", Icons.Filled.Pets),
         Pestana(Rutas.SERVICIOS, "Servicios", Icons.Filled.LocalOffer),
     )
     val rutasDueno = pestanasDueno.map { it.ruta }
@@ -284,8 +289,24 @@ fun NavVet() {
                     )
                     AgendaScreen(
                         vm = vm,
-                        onAtender = {}
+                        onAtender = { nav.navigate(Rutas.atenderCita(it)) }
                     )
+                }
+                composable(
+                    Rutas.ATENDER_CITA,
+                    arguments = listOf(navArgument("id") { type = NavType.IntType })
+                ) { entry ->
+                    val citaId = entry.arguments?.getInt("id") ?: return@composable
+                    val vm: AtenderCitaViewModel = viewModel(
+                        factory = VetViewModelFactory { AtenderCitaViewModel(repo, citaId) }
+                    )
+                    AtenderCitaScreen(vm, onBack = { nav.popBackStack() })
+                }
+                composable(Rutas.PACIENTES) {
+                    val vm: PacientesViewModel = viewModel(
+                        factory = VetViewModelFactory { PacientesViewModel(repo) }
+                    )
+                    PacientesScreen(vm, onVerMascota = { nav.navigate(Rutas.fichaMascota(it)) })
                 }
             }
         }
