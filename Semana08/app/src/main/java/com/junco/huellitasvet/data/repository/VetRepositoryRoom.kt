@@ -10,6 +10,7 @@ import com.junco.huellitasvet.data.local.relation.CitaConDetalle
 import com.junco.huellitasvet.data.local.relation.MascotaConDueno
 import com.junco.huellitasvet.model.ConteoServicio
 import com.junco.huellitasvet.model.EstadoCita
+import com.junco.huellitasvet.model.PuntoPeso
 import kotlinx.coroutines.flow.Flow
 
 /** Implementacion del contrato usando Room; cada funcion delega en el DAO correspondiente. */
@@ -114,4 +115,7 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
     override fun observarCitasPorServicio(): Flow<List<ConteoServicio>> = citas.totalPorServicio()
 
     override fun observarIngresosDesde(fechaInicio: String): Flow<Double> = citas.ingresosDesde(fechaInicio)
+
+    // ---- Fase 2 ----
+    override fun observarEvolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>> = citas.evolucionPeso(mascotaId)
 }

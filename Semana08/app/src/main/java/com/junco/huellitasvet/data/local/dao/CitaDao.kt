@@ -7,6 +7,7 @@ import androidx.room.Transaction
 import com.junco.huellitasvet.data.local.entity.Cita
 import com.junco.huellitasvet.data.local.relation.CitaConDetalle
 import com.junco.huellitasvet.model.ConteoServicio
+import com.junco.huellitasvet.model.PuntoPeso
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -61,6 +62,14 @@ interface CitaDao {
             "ORDER BY fecha DESC, hora DESC"
     )
     fun historialDe(mascotaId: Int): Flow<List<CitaConDetalle>>
+
+    /** Puntos del grafico de peso: solo atenciones con peso registrado, de la mas vieja a la nueva. */
+    @Query(
+        "SELECT fecha AS fecha, pesoRegistrado AS peso FROM citas " +
+            "WHERE mascotaId = :mascotaId AND estado = 'ATENDIDA' AND pesoRegistrado IS NOT NULL " +
+            "ORDER BY fecha ASC, hora ASC"
+    )
+    fun evolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>>
 
     // ---- Reglas de borrado ----
     @Query("SELECT COUNT(*) FROM citas WHERE servicioId = :servicioId")

@@ -7,6 +7,7 @@ import com.junco.huellitasvet.data.local.relation.CitaConDetalle
 import com.junco.huellitasvet.data.local.relation.MascotaConDueno
 import com.junco.huellitasvet.model.ConteoServicio
 import com.junco.huellitasvet.model.EstadoCita
+import com.junco.huellitasvet.model.PuntoPeso
 import kotlinx.coroutines.flow.Flow
 
 /** Contrato de datos: los ViewModels dependen de esta interface y nunca de los DAO. */
@@ -52,4 +53,7 @@ interface VetRepository {
     fun observarCantidadPorEstado(estado: EstadoCita): Flow<Int>
     fun observarCitasPorServicio(): Flow<List<ConteoServicio>>
     fun observarIngresosDesde(fechaInicio: String): Flow<Double>
+
+    // ---- Fase 2 ----
+    fun observarEvolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>>
 }

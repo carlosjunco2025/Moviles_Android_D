@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.junco.huellitasvet.data.local.entity.Mascota
 import com.junco.huellitasvet.data.local.relation.CitaConDetalle
 import com.junco.huellitasvet.data.repository.VetRepository
+import com.junco.huellitasvet.model.PuntoPeso
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,14 @@ class MascotaViewModel(private val repo: VetRepository) : ViewModel() {
     fun historial(mascotaId: Int): StateFlow<List<CitaConDetalle>> =
         historiales.getOrPut(mascotaId) {
             repo.observarHistorial(mascotaId).comoEstado(this, emptyList())
+        }
+
+    private val pesos = HashMap<Int, StateFlow<List<PuntoPeso>>>()
+
+    /** Serie de pesos registrados en las atenciones, de la mas antigua a la mas nueva. */
+    fun evolucionPeso(mascotaId: Int): StateFlow<List<PuntoPeso>> =
+        pesos.getOrPut(mascotaId) {
+            repo.observarEvolucionPeso(mascotaId).comoEstado(this, emptyList())
         }
 
     /** Nombre de 2+ letras, especie y sexo elegidos, año entre 1990 y hoy, peso positivo. */

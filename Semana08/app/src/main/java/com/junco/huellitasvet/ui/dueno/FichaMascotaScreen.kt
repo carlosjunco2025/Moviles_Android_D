@@ -34,6 +34,8 @@ import com.junco.huellitasvet.ui.components.etiquetaEspecie
 import com.junco.huellitasvet.ui.components.etiquetaSexo
 import com.junco.huellitasvet.ui.theme.degradadoMarca
 import com.junco.huellitasvet.viewmodel.MascotaViewModel
+import com.junco.huellitasvet.ui.components.TituloSeccion
+import com.junco.huellitasvet.ui.components.graficos.GraficoLineas
 
 /** Ficha de la mascota con pestañas: Datos, Historial clinico y (Fase 2) Vacunas. */
 @Composable
@@ -48,6 +50,7 @@ fun FichaMascotaScreen(
     val flujo = remember(id) { vm.mascota(id) }
     val mascota by flujo.collectAsState(initial = null)
     val historial by vm.historial(id).collectAsState()
+    val pesos by vm.evolucionPeso(id).collectAsState()
     val mensaje by vm.mensaje.collectAsState()
     val snackbar = remember { SnackbarHostState() }
     var pestana by remember { mutableIntStateOf(0) }
@@ -120,6 +123,11 @@ fun FichaMascotaScreen(
                     }
                 }
                 1 -> {
+                    TarjetaVet {
+                        TituloSeccion("Evolución del peso")
+                        Spacer(Modifier.height(10.dp))
+                        GraficoLineas(pesos)
+                    }
                     if (historial.isEmpty()) {
                         Text(
                             "Aún no tiene atenciones",
