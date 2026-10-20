@@ -48,6 +48,10 @@ import com.junco.huellitasvet.ui.dueno.PedirCitaScreen
 import com.junco.huellitasvet.viewmodel.PedirCitaViewModel
 import com.junco.huellitasvet.ui.dueno.MisCitasScreen
 import com.junco.huellitasvet.viewmodel.MisCitasViewModel
+import com.junco.huellitasvet.ui.veterinario.AgendaScreen
+import com.junco.huellitasvet.ui.veterinario.PanelScreen
+import com.junco.huellitasvet.viewmodel.AgendaViewModel
+import com.junco.huellitasvet.viewmodel.PanelViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -73,6 +77,8 @@ fun NavVet() {
         Pestana(Rutas.MIS_CITAS, "Citas", Icons.Filled.CalendarMonth),
     )
     val pestanasVet = listOf<Pestana>(
+        Pestana(Rutas.PANEL, "Panel", Icons.Filled.BarChart),
+        Pestana(Rutas.AGENDA, "Agenda", Icons.Filled.CalendarMonth),
         Pestana(Rutas.SERVICIOS, "Servicios", Icons.Filled.LocalOffer),
     )
     val rutasDueno = pestanasDueno.map { it.ruta }
@@ -85,7 +91,7 @@ fun NavVet() {
 
     /** Lleva a la pantalla principal del perfil y vacia la pila de navegacion. */
     fun irAInicio(rol: Rol) {
-        val destino = if (rol == Rol.CLIENTE) Rutas.INICIO else Rutas.SERVICIOS
+        val destino = if (rol == Rol.CLIENTE) Rutas.INICIO else Rutas.PANEL
         nav.navigate(destino) {
             popUpTo(nav.graph.id) { inclusive = true }
             launchSingleTop = true
@@ -261,6 +267,24 @@ fun NavVet() {
                     )
                     ServiciosScreen(
                         vm = vm,
+                    )
+                }
+                composable(Rutas.PANEL) {
+                    val vm: PanelViewModel = viewModel(
+                        factory = VetViewModelFactory { PanelViewModel(repo) }
+                    )
+                    PanelScreen(
+                        vm = vm,
+                        onVerPendientes = { nav.navigate(Rutas.AGENDA) { launchSingleTop = true } }
+                    )
+                }
+                composable(Rutas.AGENDA) {
+                    val vm: AgendaViewModel = viewModel(
+                        factory = VetViewModelFactory { AgendaViewModel(repo) }
+                    )
+                    AgendaScreen(
+                        vm = vm,
+                        onAtender = {}
                     )
                 }
             }
