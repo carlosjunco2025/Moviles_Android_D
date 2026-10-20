@@ -46,6 +46,8 @@ import com.junco.huellitasvet.ui.dueno.FormularioMascotaScreen
 import com.junco.huellitasvet.viewmodel.MascotaViewModel
 import com.junco.huellitasvet.ui.dueno.PedirCitaScreen
 import com.junco.huellitasvet.viewmodel.PedirCitaViewModel
+import com.junco.huellitasvet.ui.dueno.MisCitasScreen
+import com.junco.huellitasvet.viewmodel.MisCitasViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -68,6 +70,7 @@ fun NavVet() {
     val pestanasDueno = listOf<Pestana>(
         Pestana(Rutas.INICIO, "Inicio", Icons.Filled.Home),
         Pestana(Rutas.MASCOTAS, "Mascotas", Icons.Filled.Pets),
+        Pestana(Rutas.MIS_CITAS, "Citas", Icons.Filled.CalendarMonth),
     )
     val pestanasVet = listOf<Pestana>(
         Pestana(Rutas.SERVICIOS, "Servicios", Icons.Filled.LocalOffer),
@@ -237,7 +240,17 @@ fun NavVet() {
                     PedirCitaScreen(
                         vm = vm,
                         onBack = { nav.popBackStack() },
-                        onCreada = { nav.popBackStack() }
+                        onCreada = { nav.navigate(Rutas.MIS_CITAS) { popUpTo(Rutas.INICIO) } }
+                    )
+                }
+                composable(Rutas.MIS_CITAS) {
+                    val u = usuario ?: return@composable
+                    val vm: MisCitasViewModel = viewModel(
+                        factory = VetViewModelFactory { MisCitasViewModel(repo, u.id) }
+                    )
+                    MisCitasScreen(
+                        vm,
+                        onPedirCita = { nav.navigate(Rutas.pedirCita()) },
                     )
                 }
 
