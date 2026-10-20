@@ -104,4 +104,28 @@ class SesionViewModel(
             alTerminar()
         }
     }
+
+    /** Cambia entre el perfil dueño y veterinario usando las cuentas de prueba sembradas. */
+    fun cambiarPerfil(alTerminar: (Rol) -> Unit) {
+        val actual = _usuarioActual.value ?: return
+        val (correo, clave) = if (actual.rol == Rol.CLIENTE.name) {
+            "vet@huellitas.test" to "admin"
+        } else {
+            "ana@correo.test" to "1234"
+        }
+        viewModelScope.launch {
+            val otro = repo.login(correo, clave)
+            if (otro == null) {
+                _error.value = "No se encontró el otro perfil"
+            } else {
+                iniciarSesion(otro, alTerminar)
+            }
+        }
+    }
+
+    fun cambiarModoOscuro(valor: Boolean) { viewModelScope.launch { prefs.guardarModoOscuro(valor) } }
+
+    fun cambiarNotificaciones(valor: Boolean) { viewModelScope.launch { prefs.guardarNotificaciones(valor) } }
+
+    fun cambiarAceptarCitas(valor: Boolean) { viewModelScope.launch { prefs.guardarAceptarCitas(valor) } }
 }

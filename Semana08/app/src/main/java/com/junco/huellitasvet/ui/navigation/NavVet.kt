@@ -56,6 +56,10 @@ import com.junco.huellitasvet.ui.veterinario.AtenderCitaScreen
 import com.junco.huellitasvet.ui.veterinario.PacientesScreen
 import com.junco.huellitasvet.viewmodel.AtenderCitaViewModel
 import com.junco.huellitasvet.viewmodel.PacientesViewModel
+import com.junco.huellitasvet.model.EstadoCita
+import com.junco.huellitasvet.ui.dueno.PerfilScreen
+import com.junco.huellitasvet.ui.veterinario.AjustesScreen
+import com.junco.huellitasvet.ui.veterinario.FormularioServicioScreen
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -79,12 +83,14 @@ fun NavVet() {
         Pestana(Rutas.INICIO, "Inicio", Icons.Filled.Home),
         Pestana(Rutas.MASCOTAS, "Mascotas", Icons.Filled.Pets),
         Pestana(Rutas.MIS_CITAS, "Citas", Icons.Filled.CalendarMonth),
+        Pestana(Rutas.PERFIL, "Perfil", Icons.Filled.Person),
     )
     val pestanasVet = listOf<Pestana>(
         Pestana(Rutas.PANEL, "Panel", Icons.Filled.BarChart),
         Pestana(Rutas.AGENDA, "Agenda", Icons.Filled.CalendarMonth),
         Pestana(Rutas.PACIENTES, "Pacientes", Icons.Filled.Pets),
         Pestana(Rutas.SERVICIOS, "Servicios", Icons.Filled.LocalOffer),
+        Pestana(Rutas.AJUSTES, "Ajustes", Icons.Filled.Settings),
     )
     val rutasDueno = pestanasDueno.map { it.ruta }
     val rutasVet = pestanasVet.map { it.ruta }
@@ -264,6 +270,31 @@ fun NavVet() {
                         onPedirCita = { nav.navigate(Rutas.pedirCita()) },
                     )
                 }
+                composable(Rutas.PERFIL) {
+                    val u = usuario ?: return@composable
+                    val inicioVm: InicioViewModel = viewModel(
+                        factory = VetViewModelFactory { InicioViewModel(repo, u.id) }
+                    )
+                    val citasVm: MisCitasViewModel = viewModel(
+                        factory = VetViewModelFactory { MisCitasViewModel(repo, u.id) }
+                    )
+                    val mascotas by inicioVm.mascotas.collectAsState()
+                    val proximas by citasVm.proximas.collectAsState()
+                    val historial by citasVm.historial.collectAsState()
+                    val notificaciones by sesionVm.notificaciones.collectAsState()
+                    PerfilScreen(
+                        usuario = u,
+                        mascotas = mascotas.size,
+                        proximas = proximas.size,
+                        atenciones = historial.count { it.cita.estado == EstadoCita.ATENDIDA.name },
+                        oscuro = oscuro,
+                        notificaciones = notificaciones,
+                        onOscuro = sesionVm::cambiarModoOscuro,
+                        onNotificaciones = sesionVm::cambiarNotificaciones,
+                        onCambiarPerfil = { sesionVm.cambiarPerfil { rol -> irAInicio(rol) } },
+                        onCerrarSesion = { salir() }
+                    )
+                }
 
                 // ---------- Flujo del veterinario ----------
                 composable(Rutas.SERVICIOS) {
@@ -272,6 +303,8 @@ fun NavVet() {
                     )
                     ServiciosScreen(
                         vm = vm,
+                        onEditar = { nav.navigate(Rutas.formServicio(it)) },
+                        onNuevo = { nav.navigate(Rutas.formServicio()) }
                     )
                 }
                 composable(Rutas.PANEL) {
@@ -307,6 +340,39 @@ fun NavVet() {
                         factory = VetViewModelFactory { PacientesViewModel(repo) }
                     )
                     PacientesScreen(vm, onVerMascota = { nav.navigate(Rutas.fichaMascota(it)) })
+                }
+                composable(
+                    Rutas.FORM_SERVICIO,
+                    arguments = listOf(navArgument("id") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    })
+                ) { entry ->
+                    val idArg = entry.arguments?.getInt("id") ?: -1
+                    val vm: ServiciosViewModel = viewModel(
+                        factory = VetViewModelFactory { ServiciosViewModel(repo) }
+                    )
+                    FormularioServicioScreen(
+                        id = idArg.takeIf { it > 0 },
+                        vm = vm,
+                        onBack = { nav.popBackStack() }
+                    )
+                }
+                composable(Rutas.AJUSTES) {
+                    val u = usuario ?: return@composable
+                    val notificaciones by sesionVm.notificaciones.collectAsState()
+                    val aceptarCitas by sesionVm.aceptarCitas.collectAsState()
+                    AjustesScreen(
+                        usuario = u,
+                        oscuro = oscuro,
+                        notificaciones = notificaciones,
+                        aceptarCitas = aceptarCitas,
+                        onOscuro = sesionVm::cambiarModoOscuro,
+                        onNotificaciones = sesionVm::cambiarNotificaciones,
+                        onAceptarCitas = sesionVm::cambiarAceptarCitas,
+                        onCambiarPerfil = { sesionVm.cambiarPerfil { rol -> irAInicio(rol) } },
+                        onCerrarSesion = { salir() }
+                    )
                 }
             }
         }

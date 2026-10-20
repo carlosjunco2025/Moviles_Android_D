@@ -38,6 +38,13 @@ fun ServiciosScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNuevo,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = Color.White
+            ) { Icon(Icons.Filled.Add, contentDescription = "Nuevo servicio") }
+        }
     ) { padding ->
         Column(Modifier.padding(padding)) {
             CabeceraDegradada(titulo = "Servicios", subtitulo = "${servicios.size} en el catálogo")
@@ -75,6 +82,9 @@ private fun ServicioItem(s: Servicio, onAlternar: () -> Unit, onEditar: () -> Un
                 )
             }
             Switch(checked = s.activo, onCheckedChange = { onAlternar() })
+            IconButton(onClick = onEditar) {
+                Icon(Icons.Filled.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary)
+            }
         }
     }
 }
