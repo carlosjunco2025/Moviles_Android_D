@@ -36,6 +36,7 @@ fun PacientesScreen(vm: PacientesViewModel, onVerMascota: (Int) -> Unit) {
     val pacientes by vm.pacientes.collectAsState()
     val texto by vm.texto.collectAsState()
     val especie by vm.especie.collectAsState()
+    val contadores by vm.contadores.collectAsState()
 
     // Cada filtro: texto del chip + especie que representa (null = todos)
     val filtros: List<Pair<String, Especie?>> = listOf(
@@ -60,13 +61,22 @@ fun PacientesScreen(vm: PacientesViewModel, onVerMascota: (Int) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 filtros.forEach { (nombre, valor) ->
-                    OpcionChip(nombre, especie == valor, { vm.cambiarEspecie(valor) })
+                    OpcionChip("$nombre (${contadores[valor] ?: 0})", especie == valor, { vm.cambiarEspecie(valor) })
                 }
             }
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                if (pacientes.isEmpty()) {
+                    item {
+                        Text(
+                            "No se encontraron pacientes con \"${texto.trim()}\"",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
                 items(pacientes, key = { it.mascota.id }) { p ->
                     TarjetaVet(onClick = { onVerMascota(p.mascota.id) }) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
