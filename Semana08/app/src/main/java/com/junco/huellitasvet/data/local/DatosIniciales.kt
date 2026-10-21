@@ -80,10 +80,12 @@ object DatosIniciales {
         fun cita(
             mascotaId: Int, s: Servicio, dias: Long, hora: String, estado: EstadoCita,
             diagnostico: String? = null, tratamiento: String? = null, peso: Double? = null,
+            control: String? = null
         ) = Cita(
             mascotaId = mascotaId, servicioId = s.id, fecha = enDias(dias), hora = hora,
             estado = estado.name, precio = s.precio,
             diagnostico = diagnostico, tratamiento = tratamiento, pesoRegistrado = peso,
+            fechaControl = control
         )
 
         // 10 citas en distintos estados; nunca dos no canceladas en el mismo horario.
@@ -94,6 +96,7 @@ object DatosIniciales {
                 cita(luna, consulta, -100, "09:30", EstadoCita.ATENDIDA, "Control de rutina, sin hallazgos", "Ninguno", 4.2),
                 cita(luna, bano, -200, "11:00", EstadoCita.ATENDIDA, "Higiene general", "Baño medicado suave", 4.0),
                 cita(rocky, consulta, -30, "14:00", EstadoCita.ATENDIDA, "Leve dermatitis", "Shampoo especial 2 semanas", 23.8,
+                    control = enDias(6)
                 ),
                 // Hoy
                 cita(max, bano, 0, "09:00", EstadoCita.ATENDIDA, "Higiene general", "Corte de pelo", 24.5),

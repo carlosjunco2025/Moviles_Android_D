@@ -8,6 +8,7 @@ import com.junco.huellitasvet.model.EstadoCita
 import com.junco.huellitasvet.model.Formato
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 /** Pantalla de inicio del dueño: sus mascotas y su proxima cita. */
@@ -27,6 +28,16 @@ class InicioViewModel(repo: VetRepository, duenoId: Int) : ViewModel() {
                 .filter { it.cita.estado.let { e -> e == EstadoCita.PENDIENTE.name || e == EstadoCita.CONFIRMADA.name } }
                 .filter { !Formato.fechaHoraDe(it.cita.fecha, it.cita.hora).isBefore(ahora) }
                 .minByOrNull { Formato.fechaHoraDe(it.cita.fecha, it.cita.hora) }
+        }
+        .comoEstado(this, null)
+
+    /** Recordatorio: el proximo control sugerido por el veterinario que aun no vence. */
+    val proximoControl: StateFlow<CitaConDetalle?> = repo.observarControles(duenoId)
+        .map { lista ->
+            val hoy = LocalDate.now()
+            lista
+                .filter { c -> c.cita.fechaControl?.let { !LocalDate.parse(it).isBefore(hoy) } == true }
+                .minByOrNull { c -> LocalDate.parse(c.cita.fechaControl!!) }
         }
         .comoEstado(this, null)
 }

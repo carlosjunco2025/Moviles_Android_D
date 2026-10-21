@@ -17,7 +17,7 @@ import com.junco.huellitasvet.data.local.entity.Usuario
 
 @Database(
     entities = [Servicio::class, Usuario::class, Mascota::class, Cita::class, Vacuna::class],
-    version = 3,            // 3: tabla de vacunas
+    version = 4,            // 4: columna fechaControl en citas
     exportSchema = false
 )
 abstract class VetDatabase : RoomDatabase() {

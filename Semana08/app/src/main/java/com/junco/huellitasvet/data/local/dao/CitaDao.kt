@@ -26,12 +26,24 @@ interface CitaDao {
     @Query("SELECT * FROM citas WHERE id = :id")
     suspend fun buscar(id: Int): Cita?
 
-    /** Cierra la cita: estado ATENDIDA + diagnostico, tratamiento y peso del dia. */
+    /** Igual que antes, pero ademas guarda la fecha del proximo control (puede ser null). */
     @Query(
         "UPDATE citas SET estado = 'ATENDIDA', diagnostico = :diagnostico, " +
-            "tratamiento = :tratamiento, pesoRegistrado = :peso WHERE id = :id"
+            "tratamiento = :tratamiento, pesoRegistrado = :peso, fechaControl = :fechaControl " +
+            "WHERE id = :id"
     )
-    suspend fun cerrarAtencion(id: Int, diagnostico: String, tratamiento: String, peso: Double)
+    suspend fun cerrarAtencion(
+        id: Int, diagnostico: String, tratamiento: String, peso: Double, fechaControl: String?
+    )
+
+    /** Citas ATENDIDAS de un dueño que tienen proximo control, para el recordatorio de Inicio. */
+    @Transaction
+    @Query(
+        "SELECT c.* FROM citas c INNER JOIN mascotas m ON c.mascotaId = m.id " +
+            "WHERE m.duenoId = :duenoId AND c.estado = 'ATENDIDA' AND c.fechaControl IS NOT NULL " +
+            "ORDER BY c.fechaControl ASC"
+    )
+    fun controlesDeDueno(duenoId: Int): Flow<List<CitaConDetalle>>
 
     // ---- Horarios ----
     @Query("SELECT COUNT(*) FROM citas WHERE fecha = :fecha AND hora = :hora AND estado != 'CANCELADA'")

@@ -99,15 +99,16 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
         citas.cambiarEstado(id, estado.name)
 
     override suspend fun registrarAtencion(
-        citaId: Int, diagnostico: String, tratamiento: String, peso: Double
+        citaId: Int, diagnostico: String, tratamiento: String, peso: Double, fechaControl: String?
     ) {
-        // Todo o nada: la cita y el peso de la mascota se actualizan en una sola transaccion.
         db.withTransaction {
             val cita = citas.buscar(citaId) ?: return@withTransaction
-            citas.cerrarAtencion(citaId, diagnostico, tratamiento, peso)
+            citas.cerrarAtencion(citaId, diagnostico, tratamiento, peso, fechaControl)
             mascotas.cambiarPeso(cita.mascotaId, peso)
         }
     }
+
+    override fun observarControles(duenoId: Int): Flow<List<CitaConDetalle>> = citas.controlesDeDueno(duenoId)
 
     // ---- Panel ----
     override fun observarCitasDeFecha(fecha: String): Flow<Int> = citas.totalDelDia(fecha)

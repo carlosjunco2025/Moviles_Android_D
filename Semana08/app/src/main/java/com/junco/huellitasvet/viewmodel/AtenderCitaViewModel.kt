@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 /** Registro clinico de una cita: diagnostico, tratamiento y peso. */
 class AtenderCitaViewModel(
@@ -27,22 +28,31 @@ class AtenderCitaViewModel(
         estado == EstadoCita.PENDIENTE.name || estado == EstadoCita.CONFIRMADA.name
 
     /**
-     * Valida y llama a registrarAtencion, que corre en UNA transaccion: la cita queda
-     * ATENDIDA y el peso de la mascota se actualiza junto con ella.
+     * Igual que antes y ademas guarda el proximo control (aaaa-MM-dd, opcional).
+     * Si se escribe, debe ser una fecha valida posterior a hoy.
      */
-    fun registrar(diagnostico: String, tratamiento: String, peso: Double, alTerminar: () -> Unit) {
+    fun registrar(
+        diagnostico: String, tratamiento: String, peso: Double, fechaControl: String,
+        alTerminar: () -> Unit
+    ) {
         viewModelScope.launch {
             val actual = repo.observarCita(citaId).first()
+            val control = fechaControl.trim().takeIf { it.isNotEmpty() }
+            val fechaValida = control?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
             val fallos = buildMap {
                 if (actual == null || !sePuedeAtender(actual.cita.estado)) {
                     put("general", "Solo se puede atender una cita pendiente o confirmada")
                 }
                 if (diagnostico.trim().length < 5) put("diagnostico", "Mínimo 5 caracteres")
                 if (peso <= 0.0) put("peso", "Debe ser mayor que 0")
+                if (control != null && fechaValida == null) put("control", "Usa el formato aaaa-mm-dd")
+                else if (fechaValida != null && !fechaValida.isAfter(LocalDate.now())) {
+                    put("control", "Debe ser una fecha futura")
+                }
             }
             _errores.value = fallos
             if (fallos.isNotEmpty()) return@launch
-            repo.registrarAtencion(citaId, diagnostico.trim(), tratamiento.trim(), peso)
+            repo.registrarAtencion(citaId, diagnostico.trim(), tratamiento.trim(), peso, fechaValida?.toString())
             alTerminar()
         }
     }

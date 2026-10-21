@@ -26,5 +26,6 @@ data class Cita(
     val diagnostico: String? = null,
     val tratamiento: String? = null,
     val pesoRegistrado: Double? = null,
+    val fechaControl: String? = null,    // proximo control sugerido por el veterinario
     val fechaCreacion: Long = System.currentTimeMillis()
 )

@@ -40,6 +40,7 @@ fun AtenderCitaScreen(vm: AtenderCitaViewModel, onBack: () -> Unit) {
     var peso by remember { mutableStateOf("") }
     var diagnostico by remember { mutableStateOf("") }
     var tratamiento by remember { mutableStateOf("") }
+    var control by remember { mutableStateOf("") }
 
     // Propone el peso anterior de la mascota, una sola vez cuando llega la cita
     LaunchedEffect(detalle?.cita?.id) {
@@ -96,6 +97,10 @@ fun AtenderCitaScreen(vm: AtenderCitaViewModel, onBack: () -> Unit) {
             }
             VetTextField(diagnostico, { diagnostico = it }, "Diagnóstico", error = errores["diagnostico"], lineas = 3)
             VetTextField(tratamiento, { tratamiento = it }, "Tratamiento", lineas = 3)
+            VetTextField(
+                control, { control = it }, "Próximo control (aaaa-mm-dd, opcional)",
+                error = errores["control"], icono = Icons.Filled.EventRepeat, teclado = KeyboardType.Number
+            )
 
             if (pesoNuevo > 0.0) {
                 Surface(shape = RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.fillMaxWidth()) {
@@ -106,7 +111,7 @@ fun AtenderCitaScreen(vm: AtenderCitaViewModel, onBack: () -> Unit) {
                 }
             }
 
-            VetButton("Registrar atención", onClick = { vm.registrar(diagnostico, tratamiento, pesoNuevo, onBack) })
+            VetButton("Registrar atención", onClick = { vm.registrar(diagnostico, tratamiento, pesoNuevo, control, onBack) })
             VetButton("Cancelar cita", onClick = { vm.cancelar(onBack) }, secundario = true, peligro = true)
         }
     }

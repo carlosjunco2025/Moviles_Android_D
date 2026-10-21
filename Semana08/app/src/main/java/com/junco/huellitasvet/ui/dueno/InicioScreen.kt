@@ -31,6 +31,7 @@ import com.junco.huellitasvet.ui.components.TituloSeccion
 import com.junco.huellitasvet.ui.components.VetButton
 import com.junco.huellitasvet.ui.components.iconoServicio
 import com.junco.huellitasvet.viewmodel.InicioViewModel
+import com.junco.huellitasvet.ui.components.TarjetaVet
 
 /** Inicio del dueño: saludo, proxima cita, sus mascotas y accesos rapidos. */
 @Composable
@@ -44,6 +45,7 @@ fun InicioScreen(
 ) {
     val mascotas by vm.mascotas.collectAsState()
     val proxima by vm.proximaCita.collectAsState()
+    val control by vm.proximoControl.collectAsState()
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
         CabeceraDegradada(
@@ -55,6 +57,8 @@ fun InicioScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             TarjetaProximaCita(proxima)
+            // let evita el smart cast sobre una propiedad delegada (by collectAsState)
+            control?.let { c -> AvisoControl(c) }
 
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f)) { TituloSeccion("Mis mascotas") }
@@ -114,6 +118,28 @@ private fun TarjetaProximaCita(proxima: CitaConDetalle?) {
                 Surface(shape = CircleShape, color = Color.White) {
                     MascotaAvatar(proxima.mascota.mascota.especie, Modifier.padding(4.dp), tamano = 56.dp)
                 }
+            }
+        }
+    }
+}
+
+/** Recordatorio del proximo control que dejo indicado el veterinario. */
+@Composable
+private fun AvisoControl(c: CitaConDetalle) {
+    TarjetaVet {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondaryContainer, modifier = Modifier.size(44.dp)) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(Icons.Filled.EventRepeat, null, tint = MaterialTheme.colorScheme.secondary)
+                }
+            }
+            Column {
+                Text("Próximo control de ${c.mascota.mascota.nombre}", fontWeight = FontWeight.Bold)
+                Text(
+                    c.cita.fechaControl?.let { Formato.fechaCorta(it) } ?: "",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
