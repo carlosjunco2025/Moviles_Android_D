@@ -56,4 +56,7 @@ interface VetRepository {
 
     // ---- Fase 2 ----
     fun observarEvolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>>
+
+    /** Mueve la cita a otra fecha/hora. false si el nuevo horario esta ocupado. */
+    suspend fun reprogramarCita(id: Int, fecha: String, hora: String): Boolean
 }

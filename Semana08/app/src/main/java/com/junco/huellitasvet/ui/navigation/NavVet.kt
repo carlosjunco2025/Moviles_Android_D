@@ -60,6 +60,8 @@ import com.junco.huellitasvet.model.EstadoCita
 import com.junco.huellitasvet.ui.dueno.PerfilScreen
 import com.junco.huellitasvet.ui.veterinario.AjustesScreen
 import com.junco.huellitasvet.ui.veterinario.FormularioServicioScreen
+import com.junco.huellitasvet.ui.dueno.ReprogramarCitaScreen
+import com.junco.huellitasvet.viewmodel.ReprogramarCitaViewModel
 
 /** Una pestaña de la barra inferior. */
 private data class Pestana(val ruta: String, val titulo: String, val icono: ImageVector)
@@ -268,6 +270,21 @@ fun NavVet() {
                     MisCitasScreen(
                         vm,
                         onPedirCita = { nav.navigate(Rutas.pedirCita()) },
+                        onReprogramar = { nav.navigate(Rutas.reprogramar(it)) }
+                    )
+                }
+                composable(
+                    Rutas.REPROGRAMAR,
+                    arguments = listOf(navArgument("id") { type = NavType.IntType })
+                ) { entry ->
+                    val citaId = entry.arguments?.getInt("id") ?: return@composable
+                    val vm: ReprogramarCitaViewModel = viewModel(
+                        factory = VetViewModelFactory { ReprogramarCitaViewModel(repo, citaId) }
+                    )
+                    ReprogramarCitaScreen(
+                        vm = vm,
+                        onBack = { nav.popBackStack() },
+                        onListo = { nav.popBackStack() }
                     )
                 }
                 composable(Rutas.PERFIL) {

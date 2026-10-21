@@ -33,6 +33,7 @@ import com.junco.huellitasvet.viewmodel.MisCitasViewModel
 fun MisCitasScreen(
     vm: MisCitasViewModel,
     onPedirCita: () -> Unit,
+    onReprogramar: (Int) -> Unit
 ) {
     val proximas by vm.proximas.collectAsState()
     val historial by vm.historial.collectAsState()
@@ -92,6 +93,9 @@ fun MisCitasScreen(
                     ) {
                         if (puedeCancelar) {
                             Row {
+                                TextButton(onClick = { onReprogramar(c.cita.id) }) {
+                                    Text("Reprogramar", fontWeight = FontWeight.Bold)
+                                }
                                 TextButton(onClick = { citaACancelar = c.cita }) {
                                     Text("Cancelar", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
                                 }

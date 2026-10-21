@@ -118,4 +118,13 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
 
     // ---- Fase 2 ----
     override fun observarEvolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>> = citas.evolucionPeso(mascotaId)
+
+    override suspend fun reprogramarCita(id: Int, fecha: String, hora: String): Boolean {
+        val actual = citas.buscar(id) ?: return false
+        // Si la cita ya esta en ese horario no hay nada que mover; si otra lo ocupa, se rechaza.
+        val mismoHorario = actual.fecha == fecha && actual.hora == hora
+        if (!mismoHorario && citas.contarEnHorario(fecha, hora) > 0) return false
+        citas.mover(id, fecha, hora)
+        return true
+    }
 }

@@ -40,6 +40,9 @@ interface CitaDao {
     @Query("SELECT hora FROM citas WHERE fecha = :fecha AND estado != 'CANCELADA'")
     fun horasTomadas(fecha: String): Flow<List<String>>
 
+    @Query("UPDATE citas SET fecha = :fecha, hora = :hora WHERE id = :id")
+    suspend fun mover(id: Int, fecha: String, hora: String)
+
     // ---- Lecturas con detalle ----
     @Transaction
     @Query(
