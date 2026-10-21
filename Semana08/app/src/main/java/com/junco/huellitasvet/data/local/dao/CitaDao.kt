@@ -86,6 +86,12 @@ interface CitaDao {
     )
     fun evolucionPeso(mascotaId: Int): Flow<List<PuntoPeso>>
 
+    /** Citas no canceladas dentro de un rango de fechas (para pintar el mes del calendario). */
+    @Query(
+        "SELECT fecha FROM citas WHERE fecha BETWEEN :desde AND :hasta AND estado != 'CANCELADA'"
+    )
+    fun fechasConCitas(desde: String, hasta: String): Flow<List<String>>
+
     // ---- Reglas de borrado ----
     @Query("SELECT COUNT(*) FROM citas WHERE servicioId = :servicioId")
     suspend fun cuantasDeServicio(servicioId: Int): Int

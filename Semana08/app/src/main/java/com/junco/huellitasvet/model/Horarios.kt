@@ -3,6 +3,7 @@ package com.junco.huellitasvet.model
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.YearMonth
 import java.util.Locale
 
 /** Los 18 horarios de atencion: de 09:00 a 17:30, cada 30 minutos. */
@@ -21,6 +22,10 @@ object Formato {
         "ene", "feb", "mar", "abr", "may", "jun",
         "jul", "ago", "sep", "oct", "nov", "dic"
     )
+    private val mesesLargos = listOf(
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    )
 
     fun diaSemana(fecha: LocalDate): String = diasCortos[fecha.dayOfWeek.value - 1]
 
@@ -37,6 +42,9 @@ object Formato {
     }
 
     fun fechaHora(fecha: String, hora: String): String = "${fechaCorta(fecha)} · $hora"
+
+    /** YearMonth.of(2026, 10) -> "octubre 2026" */
+    fun mesAnio(mes: YearMonth): String = "${mesesLargos[mes.monthValue - 1]} ${mes.year}"
 
     fun soles(monto: Double): String = "S/ " + String.format(Locale.US, "%.2f", monto)
 

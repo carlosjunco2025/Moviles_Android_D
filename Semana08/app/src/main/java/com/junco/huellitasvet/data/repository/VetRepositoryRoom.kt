@@ -136,4 +136,7 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
     override suspend fun guardarVacuna(vacuna: Vacuna) = vacunas.insertar(vacuna)
 
     override suspend fun eliminarVacuna(vacuna: Vacuna) = vacunas.borrar(vacuna)
+
+    override fun observarFechasConCitas(desde: String, hasta: String): Flow<List<String>> =
+        citas.fechasConCitas(desde, hasta)
 }

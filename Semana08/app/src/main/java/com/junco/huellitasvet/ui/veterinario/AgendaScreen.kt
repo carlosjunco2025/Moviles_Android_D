@@ -29,12 +29,15 @@ import com.junco.huellitasvet.ui.components.FechaChip
 import com.junco.huellitasvet.ui.components.MascotaAvatar
 import com.junco.huellitasvet.ui.components.TarjetaVet
 import com.junco.huellitasvet.viewmodel.AgendaViewModel
+import com.junco.huellitasvet.ui.components.CalendarioMes
 
 /** Agenda diaria: elegir un dia y confirmar, atender o cancelar sus citas. */
 @Composable
 fun AgendaScreen(vm: AgendaViewModel, onAtender: (Int) -> Unit) {
     val fecha by vm.fechaSeleccionada.collectAsState()
     val citas by vm.citas.collectAsState()
+    val mes by vm.mes.collectAsState()
+    val diasConCitas by vm.diasConCitas.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -49,12 +52,15 @@ fun AgendaScreen(vm: AgendaViewModel, onAtender: (Int) -> Unit) {
                 CabeceraDegradada(titulo = "Agenda", subtitulo = Formato.fechaCorta(fecha.toString()))
             }
             item {
-                Row(
-                    Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    vm.dias.forEach { d -> FechaChip(d, d == fecha, { vm.seleccionar(d) }) }
-                }
+                CalendarioMes(
+                    mes = mes,
+                    seleccionada = fecha,
+                    diasConCitas = diasConCitas,
+                    onSeleccionar = vm::seleccionar,
+                    onAnterior = vm::mesAnterior,
+                    onSiguiente = vm::mesSiguiente,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                )
             }
             if (citas.isEmpty()) {
                 item {

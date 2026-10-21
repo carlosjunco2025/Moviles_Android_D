@@ -66,4 +66,5 @@ interface VetRepository {
     fun observarVacunas(mascotaId: Int): Flow<List<Vacuna>>
     suspend fun guardarVacuna(vacuna: Vacuna)
     suspend fun eliminarVacuna(vacuna: Vacuna)
+    fun observarFechasConCitas(desde: String, hasta: String): Flow<List<String>>
 }
