@@ -11,6 +11,7 @@ import com.junco.huellitasvet.data.local.relation.MascotaConDueno
 import com.junco.huellitasvet.model.ConteoServicio
 import com.junco.huellitasvet.model.EstadoCita
 import com.junco.huellitasvet.model.PuntoPeso
+import com.junco.huellitasvet.data.local.entity.Vacuna
 import kotlinx.coroutines.flow.Flow
 
 /** Implementacion del contrato usando Room; cada funcion delega en el DAO correspondiente. */
@@ -20,6 +21,7 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
     private val usuarios get() = db.usuarioDao()
     private val mascotas get() = db.mascotaDao()
     private val citas get() = db.citaDao()
+    private val vacunas get() = db.vacunaDao()
 
     // ---- Servicios ----
     override fun observarServicios(): Flow<List<Servicio>> = servicios.todos()
@@ -127,4 +129,10 @@ class VetRepositoryRoom(private val db: VetDatabase) : VetRepository {
         citas.mover(id, fecha, hora)
         return true
     }
+
+    override fun observarVacunas(mascotaId: Int): Flow<List<Vacuna>> = vacunas.deMascota(mascotaId)
+
+    override suspend fun guardarVacuna(vacuna: Vacuna) = vacunas.insertar(vacuna)
+
+    override suspend fun eliminarVacuna(vacuna: Vacuna) = vacunas.borrar(vacuna)
 }

@@ -8,6 +8,7 @@ import com.junco.huellitasvet.model.Especie
 import com.junco.huellitasvet.model.EstadoCita
 import com.junco.huellitasvet.model.Rol
 import com.junco.huellitasvet.model.Sexo
+import com.junco.huellitasvet.data.local.entity.Vacuna
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
@@ -102,6 +103,15 @@ object DatosIniciales {
                 cita(luna, vacunacion, 1, "10:30", EstadoCita.CONFIRMADA),
                 cita(max, consulta, 2, "10:00", EstadoCita.PENDIENTE),
                 cita(michi, vacunacion, 3, "09:30", EstadoCita.CANCELADA)
+            )
+        )
+
+        // Carnet de vacunas de Luna y Max
+        db.vacunaDao().insertarVarias(
+            listOf(
+                Vacuna(mascotaId = luna, nombre = "Triple felina", fecha = enDias(-10), proximaDosis = enDias(355)),
+                Vacuna(mascotaId = luna, nombre = "Antirrábica", fecha = enDias(-200), proximaDosis = enDias(165)),
+                Vacuna(mascotaId = max, nombre = "Quíntuple canina", fecha = enDias(-60), proximaDosis = null)
             )
         )
     }

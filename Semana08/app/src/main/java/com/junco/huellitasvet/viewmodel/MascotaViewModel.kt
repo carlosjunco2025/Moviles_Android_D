@@ -6,6 +6,7 @@ import com.junco.huellitasvet.data.local.entity.Mascota
 import com.junco.huellitasvet.data.local.relation.CitaConDetalle
 import com.junco.huellitasvet.data.repository.VetRepository
 import com.junco.huellitasvet.model.PuntoPeso
+import com.junco.huellitasvet.data.local.entity.Vacuna
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +42,46 @@ class MascotaViewModel(private val repo: VetRepository) : ViewModel() {
         pesos.getOrPut(mascotaId) {
             repo.observarEvolucionPeso(mascotaId).comoEstado(this, emptyList())
         }
+
+    private val carnets = HashMap<Int, StateFlow<List<Vacuna>>>()
+
+    fun vacunas(mascotaId: Int): StateFlow<List<Vacuna>> =
+        carnets.getOrPut(mascotaId) {
+            repo.observarVacunas(mascotaId).comoEstado(this, emptyList())
+        }
+
+    /** Nombre obligatorio; fecha y refuerzo en formato aaaa-MM-dd (el refuerzo es opcional). */
+    fun agregarVacuna(mascotaId: Int, nombre: String, fecha: String, proxima: String, alTerminar: () -> Unit) {
+        val hoy = LocalDate.now()
+        val aplicada = runCatching { LocalDate.parse(fecha.trim()) }.getOrNull()
+        val refuerzo = proxima.trim().takeIf { it.isNotEmpty() }?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+        val fallos = buildMap {
+            if (nombre.trim().length < 3) put("vacuna", "Mínimo 3 caracteres")
+            if (aplicada == null) put("vacunaFecha", "Usa el formato aaaa-mm-dd")
+            else if (aplicada.isAfter(hoy)) put("vacunaFecha", "No puede ser futura")
+            if (proxima.isNotBlank() && refuerzo == null) put("vacunaProxima", "Usa el formato aaaa-mm-dd")
+            else if (refuerzo != null && aplicada != null && !refuerzo.isAfter(aplicada)) {
+                put("vacunaProxima", "Debe ser posterior a la aplicación")
+            }
+        }
+        _errores.value = fallos
+        if (fallos.isNotEmpty()) return
+        viewModelScope.launch {
+            repo.guardarVacuna(
+                Vacuna(
+                    mascotaId = mascotaId,
+                    nombre = nombre.trim(),
+                    fecha = aplicada.toString(),
+                    proximaDosis = refuerzo?.toString()
+                )
+            )
+            alTerminar()
+        }
+    }
+
+    fun quitarVacuna(vacuna: Vacuna) {
+        viewModelScope.launch { repo.eliminarVacuna(vacuna) }
+    }
 
     /** Nombre de 2+ letras, especie y sexo elegidos, año entre 1990 y hoy, peso positivo. */
     private fun validar(m: Mascota): Map<String, String> {

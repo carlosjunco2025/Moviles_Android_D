@@ -8,6 +8,7 @@ import com.junco.huellitasvet.data.local.relation.MascotaConDueno
 import com.junco.huellitasvet.model.ConteoServicio
 import com.junco.huellitasvet.model.EstadoCita
 import com.junco.huellitasvet.model.PuntoPeso
+import com.junco.huellitasvet.data.local.entity.Vacuna
 import kotlinx.coroutines.flow.Flow
 
 /** Contrato de datos: los ViewModels dependen de esta interface y nunca de los DAO. */
@@ -59,4 +60,7 @@ interface VetRepository {
 
     /** Mueve la cita a otra fecha/hora. false si el nuevo horario esta ocupado. */
     suspend fun reprogramarCita(id: Int, fecha: String, hora: String): Boolean
+    fun observarVacunas(mascotaId: Int): Flow<List<Vacuna>>
+    suspend fun guardarVacuna(vacuna: Vacuna)
+    suspend fun eliminarVacuna(vacuna: Vacuna)
 }

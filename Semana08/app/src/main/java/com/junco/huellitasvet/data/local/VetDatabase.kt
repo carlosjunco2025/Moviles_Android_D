@@ -10,12 +10,14 @@ import com.junco.huellitasvet.data.local.dao.ServicioDao
 import com.junco.huellitasvet.data.local.dao.UsuarioDao
 import com.junco.huellitasvet.data.local.entity.Cita
 import com.junco.huellitasvet.data.local.entity.Mascota
+import com.junco.huellitasvet.data.local.dao.VacunaDao
+import com.junco.huellitasvet.data.local.entity.Vacuna
 import com.junco.huellitasvet.data.local.entity.Servicio
 import com.junco.huellitasvet.data.local.entity.Usuario
 
 @Database(
-    entities = [Servicio::class, Usuario::class, Mascota::class, Cita::class],
-    version = 2,            // paso de 1 a 2 al sumar tres tablas
+    entities = [Servicio::class, Usuario::class, Mascota::class, Cita::class, Vacuna::class],
+    version = 3,            // 3: tabla de vacunas
     exportSchema = false
 )
 abstract class VetDatabase : RoomDatabase() {
@@ -24,6 +26,7 @@ abstract class VetDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun mascotaDao(): MascotaDao
     abstract fun citaDao(): CitaDao
+    abstract fun vacunaDao(): VacunaDao
 
     companion object {
         @Volatile
